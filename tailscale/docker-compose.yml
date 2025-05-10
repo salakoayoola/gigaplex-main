@@ -1,0 +1,16 @@
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscaled
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - TS_HOSTNAME=${TS_HOSTNAME}  # Optional: Set a hostname for the Tailscale node
+      - TS_AUTHKEY=${TS_AUTHKEY}  # Required: Your auth key from Tailscale admin console
+      - TS_STATE_DIR=/var/lib/tailscale  # Required for persistence
+    volumes:
+      - ./config:/var/lib/tailscale  # For state persistence
+      - /dev/net/tun:/dev/net/tun  # Required for networking
+    network_mode: host  # Use host networking

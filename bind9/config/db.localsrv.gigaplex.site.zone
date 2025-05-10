@@ -1,0 +1,27 @@
+$TTL    2d
+
+$ORIGIN local.gigaplex.site.
+
+@                   IN          SOA         ns.local.gigaplex.site.      iam.salakoayoola.xyz.   (
+                                            2025042500      ;   serial
+                                            12h             ;   refresh
+                                            15m             ;   retry
+                                            3w              ;   expire
+                                            2h              ;   minimum ttl
+                                            )
+
+                    IN          ns          ns.local.gigaplex.site.
+
+ns                  IN          A           192.168.1.50
+
+; -- add dns records below
+
+infrarr             IN          A           192.168.1.50
+mediarr             IN          A           192.168.1.150
+apps                IN          A           192.168.1.200
+ahssistant          IN          A           192.168.1.105
+
+infrarr             IN          TXT         "Infrastructure Server"
+mediarr             IN          TXT         "Media Server"
+apps                IN          TXT         "Applications Server"
+ahssistant          IN          TXT         "Home Assistant"

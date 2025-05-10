@@ -1,0 +1,45 @@
+# Environment variables
+.env
+
+# JSON Files
+.json
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Extra Folders folder
+bazarr/
+cloudflare-ddns/config/
+docmost/
+downloads/
+gigaplex-resources/
+grafana/
+heimdall/
+homepage/
+influxdb/*
+immich-app/postgres/
+kometa/config/logs
+kometa/config/assets
+kometa/config/overlays
+mysql/
+nextcloud/db/
+nextcloud/html/
+nginx/data/
+nginx/letsencrypt/
+nodered/
+plex/
+plextraktsync/
+prowlarr/
+qbittorrent/
+radarr/
+sonarr/
+tautulli/
+tdarr/
+traefik/

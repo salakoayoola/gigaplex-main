@@ -1,0 +1,16 @@
+#Based on Christian Lempa's tutorial https://youtu.be/syzwLwE3Xq4?si=NBE4-UiBnJsOe-C1
+services:
+  bind9:
+    image: ubuntu/bind9:latest
+    container_name: bind9
+    restart: unless-stopped
+    environment:
+      - BIND9_USER=root
+      - TZ=EUROPE/LONDON
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - ./config:/etc/bind
+      - ./cache:/var/cache/bind
+      - ./records:/var/lib/bind

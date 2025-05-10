@@ -1,0 +1,15 @@
+tcp:
+  routers:
+    to-traefik_https:
+      rule: HostSNIRegexp(`{[0-Z]+}.${DOMAIN}`)
+      entryPoints:
+        - "websecure"
+      service: traefik_https
+      priority: 1
+      tls:
+        passthrough: true
+  services:
+    traefik_https:
+      loadBalancer:
+        servers:
+          - address: "192.168.1.200:443"  # IP of your secondary server
