@@ -29,6 +29,7 @@ tautulli/config/*
 
 #Ops
 gluetun/config/servers.json
+/tailscale-media/config/*
 
 #Download Clients
 qbittorrent/config/*

@@ -1,7 +1,7 @@
 # gigaplex-main
 4 Raspberry Pis on a journey
 
-## MEDIARR
+# MEDIARR
 
 ## GIT
 Install Git
@@ -57,11 +57,34 @@ git clone --branch <branch_name> --single-branch <repository_url> .
 ```
 
 ## Docker
+https://pimylifeup.com/raspberry-pi-docker/
+
+```bash
+curl -sSL https://get.docker.com | sh
+```
+Add your admin account to run as a privileged docker user
+```bash
+sudo usermod -aG docker <your username>
+```
+Logout and login again.
+On VS Code, you may need these additional steps
+```bash
+sudo docker pull cloudflare/cloudflared:latest
+```
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
 
 
-# Media Stack
 
-## Plex
+## Open Media Vault
+
+
+
+
+### Plex
 Deploy the docker compose file, then head to *<Your Server's IP Address>*:32400/web to configure Plex.
 
 ### [PlexTraktSync](https://github.com/Taxel/PlexTraktSync)
@@ -85,7 +108,7 @@ Use the code you get to [Activate your Device](https://github.com/Taxel/PlexTrak
 
 ### Kometa
 
-## Arrs
+### Arrs
 I've chosen to create a network for my arr stack
 ```docker
 docker network create arr-stack
