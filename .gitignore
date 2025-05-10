@@ -43,3 +43,8 @@ sonarr/
 tautulli/
 tdarr/
 traefik/
+
+/tailscale-infrarr/config/*
+bind9/config/*
+homepage/config/*
+traefik-tailscale/data/*
