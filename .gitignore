@@ -31,5 +31,5 @@ heimdall/
 immich-app/postgres/
 
 
-nextcloud/db/
-nextcloud/html/
+nextcloud/db/*
+nextcloud/html/*
