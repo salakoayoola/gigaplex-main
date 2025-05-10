@@ -1,2 +1,19 @@
-# gigaplex-main
-4 Raspberry Pis on a journey
+## Applications
+
+### Docmost
+### Ghost
+### Grafana
+### Heyform
+### Homepage
+### Homer
+### Immich
+### Influx DB
+### Kometa
+### Maria DB
+### n8n
+### Nextcloud
+### Node RED
+### Postal
+### Postgres
+### Telegraf
+### Wedding Share

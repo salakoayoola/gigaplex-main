@@ -1,0 +1,35 @@
+# Environment variables
+.env
+
+# JSON Files
+.json
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+#HeyForm
+heyform/assets/*
+heyform/mongodb_data/*
+heyform/redis_data/*
+
+#Docmost
+docmost/config/*
+docmost/db_data/*
+docmost/redis_data/*
+
+
+heimdall/
+
+#Immich
+immich-app/postgres/
+
+
+nextcloud/db/
+nextcloud/html/

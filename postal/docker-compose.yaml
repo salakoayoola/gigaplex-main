@@ -1,0 +1,21 @@
+services:
+  mariadb:
+    image: mariadb  # Use the latest MariaDB image
+    container_name: postal-mariadb  # Set container name
+    restart: always  # Automatically restart the container
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"  # Map MariaDB port
+
+  rabbitmq:
+    image: rabbitmq:3.8  # Use RabbitMQ 3.8 image
+    container_name: postal-rabbitmq  # Set container name
+    restart: always  # Automatically restart the container
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    ports:
+      - "5672:5672"  # Map RabbitMQ port

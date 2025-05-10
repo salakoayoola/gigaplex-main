@@ -1,0 +1,2 @@
+(()=>{"use strict";const o=function(o,t,e){const n=document.querySelector(`#initial-state-${o}-${t}`);if(null===n){if(void 0!==e)return e;throw new Error(`Could not find initial state ${t} of ${o}`)}try{return JSON.parse(atob(n.value))}catch(e){throw new Error(`Could not parse initial state ${t} of ${o}`)}}("google_synchronization","popup-data").user_name;window.opener&&(window.opener.postMessage({username:o}),window.close())})();
+//# sourceMappingURL=google_synchronization-popupSuccess.js.map

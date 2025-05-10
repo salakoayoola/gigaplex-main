@@ -1,0 +1,14 @@
+services:
+  cloudflared:
+    container_name: app-cloudflared
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
+    networks:
+      - app-cloudflared
+networks:
+  app-cloudflared:
+    name: app-cloudflared
+    driver: bridge

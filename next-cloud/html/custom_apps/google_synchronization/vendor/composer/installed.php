@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => '__root__',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'd91c6e9b88002181190c96013fe0888b1bd4bf96',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'd91c6e9b88002181190c96013fe0888b1bd4bf96',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'ortic/color-converter' => array(
+            'pretty_version' => 'v0.1',
+            'version' => '0.1.0.0',
+            'reference' => '6e8dba9665881177ebdc4ce4351656293a0012c1',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../ortic/color-converter',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'php-ds/php-ds' => array(
+            'pretty_version' => 'v1.5.0',
+            'version' => '1.5.0.0',
+            'reference' => '7b2c5f1843466d50769a0682ce6fa9ddaaa99cb4',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../php-ds/php-ds',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);
