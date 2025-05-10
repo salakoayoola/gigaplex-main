@@ -1,0 +1,74 @@
+services:
+#Transmission Container
+  # transmission:
+  #   image: lscr.io/linuxserver/transmission:latest
+  #   container_name: transmission
+  #   network_mode: "service:gluetun"
+  #   environment:
+  #     PUID: ${PUID}
+  #     PGID: ${PGID}
+  #     TZ: ${TZ}
+  #     # Transmission-specific settings
+  #     TRANSMISSION_WEB_UI: combustion # optional - you can use alternatives like transmission-web-control
+  #     TRANSMISSION_DOWNLOAD_DIR: /downloads/complete
+  #     TRANSMISSION_INCOMPLETE_DIR: /downloads/incomplete
+  #     TRANSMISSION_WATCH_DIR: /downloads/watch
+  #     USER: ${USER} # optional
+  #     PASS: ${PASSWORD} # optional
+  #   volumes:
+  #     - ./config-transmission:/config
+  #     - ${DOWNLOADS}:/downloads
+  #   restart: unless-stopped
+
+#Gluetun - VPN Container
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    restart: unless-stopped
+    ports:
+      # Port used by Transmission for torrenting (both TCP and UDP)
+      - 33544:33544
+      - 33544:33544/udp
+      # Transmission web UI
+      #- 9091:9091
+      - 8081:8081 # QBittorrent Web UI
+      
+      # # Other application ports
+      # - 8989:8989 # Sonarr
+      # - 7878:7878 # Radarr
+      # - 9696:9696 # Prowlarr
+    volumes:
+      - ./config-gluetun:/gluetun
+    environment:
+      - TZ=${TZ}
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      # Open port for incoming transmission connections
+      #- FIREWALL_OUTBOUND_SUBNETS=0.0.0.0/0
+      # Tell the firewall to allow the Transmission peer port
+      - FIREWALL_VPN_INPUT_PORTS=33544
+
+
+  #QBittorrent Container
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:libtorrentv1
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      WEBUI_PORT: 8081
+      # TORRENTING_PORT: 33544
+    volumes:
+      - ./config-qbittorrent:/config
+      - ${DOWNLOADS}:/downloads #optional
+    restart: unless-stopped

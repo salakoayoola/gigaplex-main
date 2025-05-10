@@ -1,0 +1,36 @@
+# Environment variables
+.env
+
+# JSON Files
+.json
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Extra Folders folder
+# ARRs
+prowlarr/config/*
+radarr/config/*
+sonarr/config/*
+bazarr/config/*
+
+#Plex Family
+kometa/config/*
+plex/config/*
+plextraktsync/config/*
+tautulli/config/*
+
+#Ops
+gluetun/config/servers.json
+
+#Download Clients
+qbittorrent/config/*
+download-stack/config-qbittorrent/*
+download-stack/config-gluetun/*

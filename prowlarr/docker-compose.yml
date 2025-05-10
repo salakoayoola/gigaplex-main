@@ -1,0 +1,21 @@
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    #network_mode: "container:gluetun"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 9696:9696 #Prowlarr
+    volumes:
+      - ./config:/config #Prowlarr Config
+    restart: unless-stopped
+    networks:
+      - arr-stack
+networks:
+  arr-stack:
+    external: true
+
+

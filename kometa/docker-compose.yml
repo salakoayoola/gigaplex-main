@@ -1,0 +1,15 @@
+services:
+# Kometa - Plex Meta Manager
+  kometa:
+    image: kometateam/kometa
+    container_name: kometa
+    environment:
+      - TZ=${TZ} #optional
+    volumes:
+      - ./config:/config
+    restart: unless-stopped
+    networks:
+      - plex-stack
+networks:
+  plex-stack:
+    external: true

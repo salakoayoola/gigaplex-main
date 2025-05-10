@@ -1,0 +1,19 @@
+services:
+#QBittorrent Container
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:libtorrentv1
+    container_name: qbittorrent
+    #network_mode: "container:gluetun"
+    ports:
+      - 8081:8081
+      - 33544:33544
+      - 33544:33544/udp
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8081
+    volumes:
+      - ./config:/config
+      - ${DOWNLOADS}:/downloads #optional
+    restart: unless-stopped

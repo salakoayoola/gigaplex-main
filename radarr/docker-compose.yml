@@ -1,0 +1,22 @@
+services:
+#Radarr
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    # network_mode: "container:gluetun"
+    ports:
+      - 7878:7878 #Radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ./config:/config #Radarr Config
+      - ${MOVIES}:/movies #Movies
+      - ${DOWNLOADS}:/downloads #Downloads
+    restart: unless-stopped
+    networks:
+      - arr-stack
+networks:
+  arr-stack:
+    external: true

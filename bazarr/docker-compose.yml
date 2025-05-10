@@ -1,0 +1,21 @@
+services:
+#Bazarr
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ./config:/config #Bazarr Config
+      - ${MOVIES}:/movies #Movies Folder
+      - ${TVSHOWS}:/tv #TV Shows Folder
+    ports:
+      - 6767:6767
+    networks:
+      - arr-stack
+    restart: unless-stopped
+networks:
+  arr-stack:
+    external: true

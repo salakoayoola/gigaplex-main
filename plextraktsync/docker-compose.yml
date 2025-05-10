@@ -1,0 +1,46 @@
+services:
+    plextraktsync:
+        image: ghcr.io/taxel/plextraktsync:main
+        command: sync
+        container_name: plextraktsync
+        restart: on-failure:2
+        networks:
+            - plex-stack
+        volumes:
+            - ./config:/app/config
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+        #PlexTraktSync Watch
+    plextraktsyncwatch:
+        image: ghcr.io/taxel/plextraktsync:main
+        container_name: plextraktsyncwatch
+        networks:
+            - plex-stack
+        volumes:
+            - ./config:/app/config
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+        command: watch
+        restart: always
+#Schedule PlexTraktSync to run daily
+    scheduler:
+        image: mcuadros/ofelia:latest
+        container_name: scheduler
+        depends_on:
+            - plextraktsync
+        command: daemon --docker
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        restart: always
+        networks:
+            - plex-stack
+        labels:
+            ofelia.job-run.plextraktsync.schedule: "@every 24h"
+            ofelia.job-run.plextraktsync.container: "plextraktsync"
+networks:
+    plex-stack:
+        external: true
