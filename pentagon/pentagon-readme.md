@@ -1,1 +1,0 @@
-Documentation, specific to Pentagon
