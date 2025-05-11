@@ -48,3 +48,5 @@ traefik/
 bind9/config/*
 homepage/config/*
 traefik-tailscale/data/*
+
+pihole/etc-pihole/*

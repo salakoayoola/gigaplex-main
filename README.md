@@ -77,7 +77,10 @@ newgrp docker
 ```
 
 ### Portainer
-
+```bash
+docker volume create portainer_data
+```
+Run the docker compose file
 
 ### Bind9 
 For Local Domain Name resolution - nameservers
