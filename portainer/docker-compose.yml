@@ -8,4 +8,9 @@ services:
       - "9443:9443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./config:/data
+      - portainer_data:/data
+volumes:
+  portainer_data:
+    name: portainer_data
+    external: true
+    driver: local

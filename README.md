@@ -76,6 +76,8 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
+### Portainer
+
 
 ### Bind9 
 For Local Domain Name resolution - nameservers
@@ -100,13 +102,17 @@ https://youtu.be/n1vOfdz5Nm8
 To generate hashed login
 First install Apache2Uils
 
-```cmd
+```bash
 sudo apt-get install apache2-utils
 ```
 
 Then proceed to, be sure to replace admin with your actual username
 
-```cmd
+```bash
 echo $(htpasswd -nB admin) | sed -e s/\\$/\\$\\$/g
 ```
+
+
+### AUTHENTIK
+https://geekscircuit.com/set-up-authentik-sso-with-nginx-proxy-manager/
 
