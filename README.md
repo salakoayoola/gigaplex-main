@@ -75,6 +75,22 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
+### Traefik
+https://youtu.be/CmUzMi5QLzI?si=GdKapwqWX5IgosjW
+
+```bash
+sudo apt install apache2-utils
+```
+Generate Dashboard Credentials
+Replace 'admin' with your username
+```bash
+echo $(htpasswd -nB admin) | sed -e s/\\$/\\$\\$/g
+```
+Adjust permission of the certificate file
+```bash
+chmod 600 data/acme.json
+```
+
 ### Docmost
 ### Ghost
 ### Grafana
@@ -86,6 +102,9 @@ newgrp docker
 ### Kometa
 ### Maria DB
 ### n8n
+https://github.com/sapochat/brand-mcp/
+https://youtu.be/awh6OnY2to8?si=jANw9v5ENx6n0f9n
+
 ### Nextcloud
 ### Node RED
 ### Postal
