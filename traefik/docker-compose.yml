@@ -1,7 +1,7 @@
 services:
   reverse-proxy:
     image: traefik:v3.3
-    container_name: traefik
+    container_name: traefik_for_applications
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true

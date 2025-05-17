@@ -94,6 +94,8 @@ chmod 600 data/acme.json
 Expose your Traefik instance to the internet with Cloudflare tunnels
 https://youtu.be/yMmxw-DZ5Ec?si=AcjKgrSa9d1nWUyn
 
+### Omni Tools
+
 ### Docmost
 ### Ghost
 ### Grafana
