@@ -25,6 +25,7 @@ services:
       - ./data/acme.json:/acme.json
       - ./data/config.yml:/etc/traefik/config.yml:ro
       - ./data/logs:/var/log/traefik
+      - ./data/conf:/etc/traefik/conf
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"

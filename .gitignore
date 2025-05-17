@@ -39,3 +39,6 @@ tailscale-apps/config/*
 #Traefik
 traefik/data/*
 traefik/data/acme.json
+
+#Authentik
+authentik/config/*

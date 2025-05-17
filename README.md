@@ -96,6 +96,10 @@ https://youtu.be/yMmxw-DZ5Ec?si=AcjKgrSa9d1nWUyn
 
 ### Omni Tools
 
+### Authentik
+https://www.youtube.com/watch?v=N5unsATNpJk
+https://www.youtube.com/watch?v=_I3hUI1JQP4
+
 ### Docmost
 ### Ghost
 ### Grafana
