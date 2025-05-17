@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./config/templates:/etc/nginx/templates
-      - ./config/html:/usr/share/nginx/html:ro
+      - ./config/html:/usr/share/nginx/html
     environment:
       - NGINX_HOST=mickey21.${DOMAIN}
       - NGINX_PORT=80

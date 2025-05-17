@@ -34,9 +34,8 @@ immich-app/postgres/
 nextcloud/db/*
 nextcloud/html/*
 
-/tailscale-apps/config/*
+tailscale-apps/config/*
 
 #Traefik
 traefik/data/*
-
-mickey7-nginx/config/*
+traefik/data/acme.json

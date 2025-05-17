@@ -90,6 +90,9 @@ Adjust permission of the certificate file
 ```bash
 chmod 600 data/acme.json
 ```
+### CloudFlare Tunnels
+Expose your Traefik instance to the internet with Cloudflare tunnels
+https://youtu.be/yMmxw-DZ5Ec?si=AcjKgrSa9d1nWUyn
 
 ### Docmost
 ### Ghost
