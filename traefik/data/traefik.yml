@@ -26,8 +26,8 @@ providers:
 certificatesResolvers:
   cloudflare:
     acme:
-      #caServer: https://acme-v02.api.letsencrypt.org/directory #Production, when all is well
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory # Staging, when testing
+      caServer: https://acme-v02.api.letsencrypt.org/directory #Production, when all is well
+      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory # Staging, when testing
       email: iam@salakoayoola.xyz
       storage: acme.json
       dnsChallenge:

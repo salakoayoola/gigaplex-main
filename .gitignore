@@ -35,3 +35,8 @@ nextcloud/db/*
 nextcloud/html/*
 
 /tailscale-apps/config/*
+
+#Traefik
+traefik/data/*
+
+mickey7-nginx/config/*

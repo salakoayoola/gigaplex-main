@@ -7,8 +7,13 @@ services:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     restart: unless-stopped
     networks:
-      - app-cloudflared
+      - frontend
+      - backend
+      - proxy
 networks:
-  app-cloudflared:
-    name: app-cloudflared
-    driver: bridge
+  frontend:
+    external: true
+  backend:
+    external: true
+  proxy:
+    external: true
