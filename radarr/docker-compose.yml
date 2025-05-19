@@ -16,7 +16,15 @@ services:
       - ${DOWNLOADS}:/downloads #Downloads
     restart: unless-stopped
     networks:
-      - arr-stack
+      servarrnetwork:
+        ipv4_address: 172.69.0.20
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.radarr-secure.entrypoints=https"
+    #   - "traefik.http.routers.radarr-secure.rule=Host(`radarr.media.${DOMAIN}`)||Host(`radarr.${DOMAIN}`)"
+    #   - "traefik.http.routers.radarr-secure.tls=true"
+    #   - "traefik.http.routers.radarr-secure.tls.certresolver=cloudflare"
+    #   - "traefik.http.services.radarr-service.loadbalancer.server.port=7878"
 networks:
-  arr-stack:
+  servarrnetwork:
     external: true

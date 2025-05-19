@@ -7,15 +7,22 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-    ports:
-      - 9696:9696 #Prowlarr
+    # ports:
+    #   - 9696:9696 #Prowlarr
     volumes:
       - ./config:/config #Prowlarr Config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr-secure.entrypoints=https"
+      - "traefik.http.routers.prowlarr-secure.rule=Host(`indexer.media.${DOMAIN}`)||Host(`indexer.${DOMAIN}`)"
+      - "traefik.http.routers.prowlarr-secure.tls=true"
+      - "traefik.http.routers.prowlarr-secure.tls.certresolver=cloudflare"
+      - "traefik.http.services.prowlarr-service.loadbalancer.server.port=9696"
     restart: unless-stopped
     networks:
-      - arr-stack
+      - frontend
 networks:
-  arr-stack:
+  frontend:
     external: true
 
 

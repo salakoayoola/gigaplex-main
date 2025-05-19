@@ -1,26 +1,5 @@
 services:
-#Transmission Container
-  # transmission:
-  #   image: lscr.io/linuxserver/transmission:latest
-  #   container_name: transmission
-  #   network_mode: "service:gluetun"
-  #   environment:
-  #     PUID: ${PUID}
-  #     PGID: ${PGID}
-  #     TZ: ${TZ}
-  #     # Transmission-specific settings
-  #     TRANSMISSION_WEB_UI: combustion # optional - you can use alternatives like transmission-web-control
-  #     TRANSMISSION_DOWNLOAD_DIR: /downloads/complete
-  #     TRANSMISSION_INCOMPLETE_DIR: /downloads/incomplete
-  #     TRANSMISSION_WATCH_DIR: /downloads/watch
-  #     USER: ${USER} # optional
-  #     PASS: ${PASSWORD} # optional
-  #   volumes:
-  #     - ./config-transmission:/config
-  #     - ${DOWNLOADS}:/downloads
-  #   restart: unless-stopped
-
-#Gluetun - VPN Container
+  # Gluetun - VPN Container
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: gluetun
@@ -30,17 +9,17 @@ services:
       - /dev/net/tun:/dev/net/tun
     restart: unless-stopped
     ports:
-      # Port used by Transmission for torrenting (both TCP and UDP)
-      - 33544:33544
-      - 33544:33544/udp
-      # Transmission web UI
-      #- 9091:9091
-      - 8081:8081 # QBittorrent Web UI
-      
-      # # Other application ports
-      # - 8989:8989 # Sonarr
-      # - 7878:7878 # Radarr
-      # - 9696:9696 # Prowlarr
+      # Port used by QBittorrent for torrenting (both TCP and UDP)
+      - ${AIRVPN_PORT}:${AIRVPN_PORT}
+      - ${AIRVPN_PORT}:${AIRVPN_PORT}/udp
+      # QBittorrent Web UI only (Sonarr/Radarr/Prowlarr are separate containers)
+      - 8081:8081
+
+      #ARR Stack
+      # - 9696:9696 #Prowlarr
+      # - 7878:7878 #Sonarr
+      # - 8989:8989 #Radarr
+
     volumes:
       - ./config-gluetun:/gluetun
     environment:
@@ -50,25 +29,38 @@ services:
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
-      # Open port for incoming transmission connections
-      #- FIREWALL_OUTBOUND_SUBNETS=0.0.0.0/0
-      # Tell the firewall to allow the Transmission peer port
-      - FIREWALL_VPN_INPUT_PORTS=33544
+      # Tell the firewall to allow the QBittorrent peer port
+      - FIREWALL_VPN_INPUT_PORTS=${AIRVPN_PORT}
+    networks:
+      - frontend
+      - backend
 
-
-  #QBittorrent Container
+  # QBittorrent Container
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:libtorrentv1
+    image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     network_mode: "service:gluetun"
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-      WEBUI_PORT: 8081
-      # TORRENTING_PORT: 33544
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8081
     volumes:
       - ./config-qbittorrent:/config
-      - ${DOWNLOADS}:/downloads #optional
+      - ${DOWNLOADS}:/downloads
     restart: unless-stopped
+    depends_on:
+      - gluetun
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent-secure.entrypoints=https"
+      - "traefik.http.routers.qbittorrent-secure.rule=Host(`qbit.media.${DOMAIN}`)||Host(`yeehaw.${DOMAIN}`)"
+      - "traefik.http.routers.qbittorrent-secure.tls=true"
+      - "traefik.http.routers.qbittorrent-secure.tls.certresolver=cloudflare"
+      - "traefik.http.services.qbittorrent-service.loadbalancer.server.port=8081"
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: false

@@ -64,7 +64,7 @@ curl -sSL https://get.docker.com | sh
 ```
 Add your admin account to run as a privileged docker user
 ```bash
-sudo usermod -aG docker <your username>
+sudo usermod -aG docker $USER
 ```
 Logout and login again.
 On VS Code, you may need these additional steps
@@ -80,7 +80,37 @@ newgrp docker
 
 
 ## Open Media Vault
+Based on this guide
+Pre Install Script
+```bash
+wget -O - https://raw.githubusercontent.com/OpenMediaVault-Plugin-Developers/installScript/master/preinstall | sudo bash
+```
+Reboot
+```bash
+sudo reboot
+```
+Install OMV
+```bash
+wget -O - https://raw.githubusercontent.com/OpenMediaVault-Plugin-Developers/installScript/master/install | sudo bash
+```
+Reboot Again
+```bash
+sudo reboot
+```
+If you manage this through VSCode, you may need to allow port forwarding on your server. Do
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+Change to "tcpForwarding yes" ctrl + x, Y and then then reboot
 
+login to your dashboard at the ip address of your server.
+Default login is username: admin, password: openmediavault.
+
+Change the default password for security reasons, you can continue with your existing user account by granting yourself better permissions.
+
+```bash
+sudo usermod -aG openmediavault-admin $USER
+```
 
 
 

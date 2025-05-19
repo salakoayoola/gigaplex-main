@@ -2,15 +2,48 @@ services:
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    network_mode: host
+    restart: unless-stopped
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
       - VERSION=docker
-      - PLEX_CLAIM= #optional
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      # # Allow connections from anywhere including Tailscale network
+      # - ALLOWED_NETWORKS=172.16.0.0/12,192.168.0.0/16,10.0.0.0/8,100.64.0.0/10
     volumes:
       - ./config:/config
       - ${TVSHOWS}:/tv #TV Shows
       - ${MOVIES}:/movies #Movies
-    restart: unless-stopped
+      # - ${MUSIC:-./music}:/music #Music (optional)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:32400/web/index.html || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # labels:
+    #   # Traefik configuration for local/direct access
+    #   - "traefik.enable=true"
+    #   # Standard HTTPS router
+    #   - "traefik.http.routers.plex-secure.entrypoints=https"
+    #   - "traefik.http.routers.plex-secure.rule=Host(`plex.media.${DOMAIN}`)||Host(`player.${DOMAIN}`)"
+    #   - "traefik.http.routers.plex-secure.tls=true"
+    #   - "traefik.http.routers.plex-secure.tls.certresolver=cloudflare"
+    #   # Tailscale DNS hostname router (using your Tailscale MagicDNS name)
+    #   - "traefik.http.routers.plex-tailscale.rule=Host(`plex.${TAILSCALE_HOSTNAME}`)"
+    #   - "traefik.http.routers.plex-tailscale.entrypoints=http"
+    #   # Generic service configuration used by both routers
+    #   - "traefik.http.services.plex-service.loadbalancer.server.port=32400"
+    #   - "traefik.http.routers.plex-secure.service=plex-service"
+    #   - "traefik.http.routers.plex-tailscale.service=plex-service"
+    networks:
+      - plex-apps
+    # Optionally expose the direct port for Tailscale access
+    # Use this if Traefik is causing issues with direct Tailscale access
+    ports:
+      - "32400:32400"
+
+networks:
+  plex-apps:
+    external: true

@@ -16,7 +16,15 @@ services:
       - ${DOWNLOADS}:/downloads #Downloads
     restart: unless-stopped
     networks:
-      - arr-stack
+      servarrnetwork:
+        ipv4_address: 172.69.0.10
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.sonarr-secure.entrypoints=https"
+    #   - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.media.${DOMAIN}`)||Host(`sonarr.${DOMAIN}`)"
+    #   - "traefik.http.routers.sonarr-secure.tls=true"
+    #   - "traefik.http.routers.sonarr-secure.tls.certresolver=cloudflare"
+    #   - "traefik.http.services.sonarr-service.loadbalancer.server.port=8989"
 networks:
-  arr-stack:
+  servarrnetwork:
     external: true

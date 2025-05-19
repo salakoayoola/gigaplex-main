@@ -4,8 +4,6 @@ services:
         command: sync
         container_name: plextraktsync
         restart: on-failure:2
-        networks:
-            - plex-stack
         volumes:
             - ./config:/app/config
         environment:
@@ -16,8 +14,6 @@ services:
     plextraktsyncwatch:
         image: ghcr.io/taxel/plextraktsync:main
         container_name: plextraktsyncwatch
-        networks:
-            - plex-stack
         volumes:
             - ./config:/app/config
         environment:
@@ -36,11 +32,6 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         restart: always
-        networks:
-            - plex-stack
         labels:
             ofelia.job-run.plextraktsync.schedule: "@every 24h"
             ofelia.job-run.plextraktsync.container: "plextraktsync"
-networks:
-    plex-stack:
-        external: true

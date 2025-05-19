@@ -14,8 +14,10 @@ services:
     ports:
       - 6767:6767
     networks:
-      - arr-stack
+      servarrnetwork: 
+        ipv4_address: 172.69.0.50
+# labels:
     restart: unless-stopped
 networks:
-  arr-stack:
+  servarrnetwork:
     external: true
