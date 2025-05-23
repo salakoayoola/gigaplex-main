@@ -11,6 +11,8 @@ services:
             - PGID=${PGID}
             - TZ=${TZ}
         #PlexTraktSync Watch
+        networks:
+            - plex-apps
     plextraktsyncwatch:
         image: ghcr.io/taxel/plextraktsync:main
         container_name: plextraktsyncwatch
@@ -22,6 +24,8 @@ services:
             - TZ=${TZ}
         command: watch
         restart: always
+        networks:
+            - plex-apps
 #Schedule PlexTraktSync to run daily
     scheduler:
         image: mcuadros/ofelia:latest
@@ -35,3 +39,9 @@ services:
         labels:
             ofelia.job-run.plextraktsync.schedule: "@every 24h"
             ofelia.job-run.plextraktsync.container: "plextraktsync"
+        networks:
+            - plex-apps
+
+networks:
+  plex-apps:
+    external: true

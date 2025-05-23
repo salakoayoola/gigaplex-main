@@ -20,9 +20,16 @@ prowlarr/config/*
 radarr/config/*
 sonarr/config/*
 bazarr/config/*
+huntarr/config/*
 
 #Plex Family
-kometa/config/*
+kometa/config/config.yml
+kometa/config/config.cache
+kometa/config/UUID
+kometa/config/._.DS_Store
+kometa/config/logs/*
+kometa/config/overlays/*
+
 plex/config/*
 plextraktsync/config/*
 tautulli/config/*

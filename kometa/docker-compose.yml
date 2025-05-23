@@ -1,15 +1,39 @@
 services:
-# Kometa - Plex Meta Manager
   kometa:
     image: kometateam/kometa
     container_name: kometa
     environment:
-      - TZ=${TZ} #optional
+      - TZ=Europe/London
+      - KOMETA_TIMES=03:00
     volumes:
       - ./config:/config
     restart: unless-stopped
     networks:
-      - plex-stack
+      - plex-apps
+  imagemaid:
+    image: kometateam/imagemaid
+    container_name: imagemaid
+    environment:
+      - TZ=Europe/London #optional
+      - SCHEDULE=05:00|weekly(sunday)
+      - PLEX_URL=${PLEX_URL}
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - PLEX_PATH=${PLEX_PATH}
+      - MODE=cleanup
+      - OVERLAYS_ONLY=false
+      - TIMEOUT=60
+      - NO_VERIFY_SSL=false
+      - SLEEP=60
+      - IGNORE_RUNNING=false
+    volumes:
+      - ./config:/config
+      - ${PLEX_PATH}:/plex
+    restart: unless-stopped
+    networks:
+      - plex-apps
+    depends_on:
+      - kometa
+
 networks:
-  plex-stack:
+  plex-apps:
     external: true

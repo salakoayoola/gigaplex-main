@@ -13,7 +13,7 @@ services:
       - 8181:8181
     restart: unless-stopped
     networks:
-      - plex-stack
+      - plex-apps
 networks:
-  plex-stack:
+  plex-apps:
     external: true
