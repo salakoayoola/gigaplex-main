@@ -52,7 +52,7 @@ services:
       - "traefik.enable=true"
       #HTTPS Router
       - "traefik.http.routers.authentik-secure.entrypoints=https"
-      - "traefik.http.routers.authentik-secure.rule=Host(`pentagon.${DOMAIN}`)||Host(`authentik-admin.home.${DOMAIN}`)" #Expose both outside and the internal domains for Traefik
+      - "traefik.http.routers.authentik-secure.rule=Host(`pentagon.${DOMAIN}`)||Host(`authentik-admin.apps.${DOMAIN}`)" #Expose both outside and the internal domains for Traefik
       - "traefik.http.routers.authentik-secure.tls=true"
       - "traefik.http.routers.authentik-secure.tls.certresolver=cloudflare"
       # Service configuration
