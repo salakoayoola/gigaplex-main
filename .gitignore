@@ -42,3 +42,6 @@ traefik/data/acme.json
 
 #Authentik
 authentik/config/*
+
+mickey7-nginx/config/ssl/*
+mickey7-nginx/config/templates/*
