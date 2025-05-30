@@ -1,0 +1,14 @@
+services:
+  wyp:
+    image: aceberg/watchyourports
+    restart: unless-stopped
+    ports:
+    - 8853:8853
+    volumes:
+    - ./config:/data/WatchYourPorts
+    environment:
+      TZ: Europe/London    # required, default: ""
+      HOST: "0.0.0.0"         # optional, default: 0.0.0.0
+      PORT: "8853"            # optional, default: 8853
+      THEME: "grass"          # optional, default: grass
+      COLOR: "dark"           # optional, default: dark
