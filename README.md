@@ -100,6 +100,11 @@ https://youtu.be/yMmxw-DZ5Ec?si=AcjKgrSa9d1nWUyn
 https://www.youtube.com/watch?v=N5unsATNpJk
 https://www.youtube.com/watch?v=_I3hUI1JQP4
 
+### LinkWarden
+Easy to install - https://youtu.be/novI6QX9LBY?si=Z7f28VWk67c63qa3
+
+If you're migrating from the Pocket App, you can use the [pocket2linkwarden](https://github.com/fmhall/pocket2linkwarden)
+
 ### Docmost
 ### Ghost
 ### Grafana

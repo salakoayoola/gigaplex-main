@@ -45,3 +45,5 @@ authentik/config/*
 
 mickey7-nginx/config/ssl/*
 mickey7-nginx/config/templates/*
+
+linkwarden/config/*
