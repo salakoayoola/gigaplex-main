@@ -47,3 +47,23 @@ mickey7-nginx/config/ssl/*
 mickey7-nginx/config/templates/*
 
 linkwarden/config/*
+
+ollama/config/*
+
+llm/config/*
+llm/data/*
+llm/LocalAI/*
+
+liteLLM/config/*
+liteLLM/data/*
+
+karakeep/config/*
+
+n8n/config/*
+n8n/data/*
+
+/heyform-ea_in_bloom/assets-ea*
+/heyform-ea_in_bloom/config*
+
+/heyform/config/*
+/heyform/assets/*

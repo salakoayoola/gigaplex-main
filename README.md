@@ -105,8 +105,44 @@ Easy to install - https://youtu.be/novI6QX9LBY?si=Z7f28VWk67c63qa3
 
 If you're migrating from the Pocket App, you can use the [pocket2linkwarden](https://github.com/fmhall/pocket2linkwarden)
 
+### Karakeep
+Shortly after trying out Linkwarden, I moved to Karakeep straight up.
+I prefer how it manages thumbnails
+
+Revisit LocalAI, Lite LLM at a later time
+
+### Umami
+For page analytics
+https://umami.is/docs/install
+https://plugins.traefik.io/plugins/65d4cc8e769af9e5f2251e09/umami-analytics
+
+
+### n8n
+https://github.com/sapochat/brand-mcp/
+https://youtu.be/awh6OnY2to8?si=jANw9v5ENx6n0f9n
+
+
+### Project Management
+
+https://appflowy.com/
+
+Baserow
+
+https://developers.plane.so/self-hosting/methods/docker-compose#install-community-edition
 ### Docmost
+
+### Drive in the Cloud
+
+https://github.com/hudikhq/hoodik
+
 ### Ghost
+
+### Documenso
+https://documenso.com/
+
+### Rally
+https://rallly.co/
+
 ### Grafana
 ### Heyform
 ### Homepage
@@ -115,9 +151,7 @@ If you're migrating from the Pocket App, you can use the [pocket2linkwarden](htt
 ### Influx DB
 ### Kometa
 ### Maria DB
-### n8n
-https://github.com/sapochat/brand-mcp/
-https://youtu.be/awh6OnY2to8?si=jANw9v5ENx6n0f9n
+
 
 ### Nextcloud
 ### Node RED

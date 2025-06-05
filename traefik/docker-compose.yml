@@ -43,6 +43,8 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN1}"
       - "traefik.http.routers.traefik-secure.tls.domains[1].main=${DOMAIN2}"
       - "traefik.http.routers.traefik-secure.tls.domains[1].sans=*.${DOMAIN2}"
+      - "traefik.http.routers.traefik-secure.tls.domains[1].main=${DOMAIN3}"
+      - "traefik.http.routers.traefik-secure.tls.domains[1].sans=*.${DOMAIN3}"
       
       - "traefik.http.routers.traefik-secure.service=api@internal"
 

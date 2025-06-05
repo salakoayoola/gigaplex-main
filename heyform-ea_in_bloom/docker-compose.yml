@@ -1,0 +1,79 @@
+networks:
+  keydb-ea:
+  mongo-ea:
+  frontend:
+    external: true
+  backend:
+    external: true
+
+services:
+  heyform-ea:
+    image: heyform/community-edition:latest
+    container_name: heyform-ea
+    restart: always
+    volumes:
+      - ./assets-ea:/app/static/upload
+    env_file: .env
+    environment:
+      APP_HOMEPAGE_URL: https://rsvp.${DOMAIN}
+      TRUST_PROXY: 1
+      SESSION_KEY: ${SESSION_KEY_EA}
+      FORM_ENCRYPTION_KEY: ${FORM_ENCRYPTION_KEY_EA}
+      MONGO_URI: mongodb://mongo-ea:27017/heyform
+      REDIS_HOST: redis-ea
+      REDIS_PORT: 6380
+      APP_LISTEN_PORT: 8005
+      UNSPLASH_CLIENT_ID: ${UNSPLASH_CLIENT_ID}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
+    depends_on:
+      - mongo-ea
+      - redis-ea
+    networks:
+      - mongo-ea
+      - keydb-ea
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.heyform-ea.rule=Host(`rsvp.apps.${DOMAIN}`)||Host(`rsvp.${DOMAIN}`)"
+      - "traefik.http.routers.heyform-ea.entrypoints=http"
+      - "traefik.http.middlewares.heyform-ea-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.heyform-ea.middlewares=heyform-ea-https-redirect"
+
+      - "traefik.http.routers.heyform-ea-secure.rule=Host(`rsvp.apps.${DOMAIN}`)||Host(`rsvp.${DOMAIN}`)"
+      - "traefik.http.routers.heyform-ea-secure.entrypoints=https"
+      - "traefik.http.routers.heyform-ea-secure.tls=true"
+      - "traefik.http.routers.heyform-ea-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.heyform-ea-secure.service=heyform-ea-service"
+
+      - "traefik.http.services.heyform-ea-service.loadbalancer.server.port=8005"
+
+
+  mongo-ea:
+    image: mongo:4.4.18
+    container_name: mongo-ea
+    restart: always
+    volumes:
+      - ./config/mongodb_data_ea:/data/db
+    networks:
+      - mongo-ea
+    command: --wiredTigerCacheSizeGB 0.25
+
+  redis-ea:
+    image: redis:alpine
+    container_name: redis-ea
+    restart: always
+    command: redis-server --port 6380 --appendonly yes --protected-mode no
+    volumes:
+      - ./config/redis_data_ea:/data
+    networks:
+      - keydb-ea
+
+volumes:
+  mongodb_data_ea:
+  redis_data_ea:

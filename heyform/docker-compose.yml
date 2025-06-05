@@ -1,6 +1,10 @@
 networks:
   keydb:
   mongo:
+  frontend:
+    external: true
+  backend:
+    external: true
 
 services:
   heyform:
@@ -9,61 +13,80 @@ services:
     restart: always
     volumes:
       - ./assets:/app/static/upload
-    depends_on:
-      - mongo
-      - redis
-    ports:
-      - '9513:8000'
+    env_file: .env
     environment:
-      APP_HOMEPAGE_URL: ${APP_HOMEPAGE}
+      # Use HTTPS to match cookie expectations
+      APP_HOMEPAGE_URL: https://forms.${DOMAIN}
+      TRUST_PROXY: 1
       SESSION_KEY: ${SESSION_KEY}
       FORM_ENCRYPTION_KEY: ${FORM_ENCRYPTION_KEY}
-      #MongoDB
-      # MONGO_USER: ${MONGO_USER}
-      # MONGO_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_URI: 'mongodb://mongo:27017/heyform'
-      #Redis
+      APP_LISTEN_PORT: 8000
+
+      # MongoDB
+      MONGO_URI: mongodb://mongo:27017/heyform
+
+      # Redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      # REDIS_PASSWORD: ${REDIS_PASSWORD}
-      #Unsplash
+
+      # Unsplash
       UNSPLASH_CLIENT_ID: ${UNSPLASH_CLIENT_ID}
-      #Mail
+
+      # Mail
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_FROM: ${SMTP_FROM}
-      #SMTP_SECURE: ${SMTP_SECURE}
-      #SMTP_IGNORE_CERT: ${SMTP_IGNORE_CERT}
+
+    depends_on:
+      - mongo
+      - redis
+
     networks:
       - mongo
       - keydb
+      - frontend
+      - backend
+
+    labels:
+      - "traefik.enable=true"
+
+      # Insecure HTTP router (for redirect)
+      - "traefik.http.routers.heyform.rule=Host(`forms.${DOMAIN}`)||Host(`forms.apps.${DOMAIN}`)"
+      - "traefik.http.routers.heyform.entrypoints=http"
+      - "traefik.http.middlewares.heyform-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.heyform.middlewares=heyform-https-redirect"
+
+      # Secure HTTPS router
+      - "traefik.http.routers.heyform-secure.rule=Host(`forms.${DOMAIN}`)||Host(`forms.apps.${DOMAIN}`)"
+      - "traefik.http.routers.heyform-secure.entrypoints=https"
+      - "traefik.http.routers.heyform-secure.tls=true"
+      - "traefik.http.routers.heyform-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.heyform-secure.service=heyform-service"
+
+      # Expose internal app port 8000 to Traefik
+      - "traefik.http.services.heyform-service.loadbalancer.server.port=8000"
 
   mongo:
     image: mongo:4.4.18
-    container_name: heform-mongo
+    container_name: mongo
     restart: always
     volumes:
-      - ./mongodb_data:/data/db
+      - ./config/mongodb_data:/data/db
     networks:
       - mongo
     command: --wiredTigerCacheSizeGB 0.25
-    # environment:
-    #   MONGO_USER: ${MONGO_USER}
-    #   MONGO_PASSWORD: ${MONGO_PASSWORD}
 
   redis:
     image: redis:alpine
-    container_name: heyform-redis
+    container_name: redis
     restart: always
     command: redis-server --appendonly yes --protected-mode no
     volumes:
-      - ./redis_data:/data
+      - ./config/redis_data:/data
     networks:
       - keydb
-    # environment:
-    #   REDIS_PASSWORD: ${REDIS_PASSWORD}
 
 volumes:
   mongodb_data:
