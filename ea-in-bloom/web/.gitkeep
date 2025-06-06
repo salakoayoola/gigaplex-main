@@ -1,0 +1,39 @@
+# Wedding Photo Instructions
+
+Place your wedding photos here with these exact filenames:
+
+## Background Image
+- **background.jpg** - Black and white background image for the entire page
+  - Recommended: High resolution landscape photo (1920x1080 or higher)
+  - Should be black and white or grayscale
+  - File size: Under 2MB for fast loading
+
+## Slideshow Images
+- **slide1.jpg** - First slideshow image
+- **slide2.jpg** - Second slideshow image  
+- **slide3.jpg** - Third slideshow image
+
+### Slideshow Image Specifications:
+- Aspect ratio: 16:9 or 4:3 recommended
+- Resolution: 1200x800 pixels minimum
+- File size: Under 1MB each for optimal loading
+- Format: JPG or PNG
+
+### Image Protection Features:
+- Right-click disabled
+- Drag and drop disabled
+- Text selection on images disabled
+- Developer tools access restricted
+- Save shortcuts disabled
+
+### Tips:
+- Use high-contrast, romantic images
+- Ensure images look good in the rounded rectangle frame
+- Test on mobile devices for proper display
+- Consider image compression for faster loading
+
+Example filenames:
+- background.jpg
+- slide1.jpg
+- slide2.jpg
+- slide3.jpg

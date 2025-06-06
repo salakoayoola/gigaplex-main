@@ -1,0 +1,352 @@
+/* Custom fonts */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Disable right-click context menu globally */
+body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Re-enable text selection for content areas */
+.font-playfair,
+.font-inter,
+p, h1, h2, h3 {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.font-playfair {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Image protection styles */
+.protected-image {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
+
+/* Re-enable pointer events for slideshow navigation */
+.slideshow-container,
+.slideshow-nav,
+.slideshow-indicators {
+    pointer-events: auto;
+}
+
+/* Slideshow container - now responsive to 2/3 screen width */
+.slideshow-container {
+    position: relative;
+    width: 66.67%; /* 2/3 of screen width */
+    max-width: 800px; /* Maximum size for very large screens */
+    min-width: 320px; /* Minimum size for very small screens */
+    margin: auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 8px 32px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+/* Slides wrapper for smooth horizontal transitions */
+.slides-wrapper {
+    position: relative;
+    width: 100%;
+    height: 350px; /* Fixed height for consistent transitions */
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+/* Individual slides - positioned absolutely for smooth transitions */
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide.prev {
+    transform: translateX(-100%);
+}
+
+/* Slide images - responsive and properly sized */
+.slide img {
+    width: 100%;
+    /* height: 100%; */
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Placeholder divs for failed images */
+.slide .placeholder {
+    width: 100%;
+    /* height: 100%; */
+    background: linear-gradient(135deg, #2D5016, #3A6B1F);
+    border-radius: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* Navigation arrows - improved positioning */
+.slideshow-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: #2D5016;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 15;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slideshow-nav:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.slideshow-nav:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.slideshow-nav.prev {
+    left: 15px;
+}
+
+.slideshow-nav.next {
+    right: 15px;
+}
+
+/* Slide indicators - improved styling */
+.slideshow-indicators {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.indicator {
+    height: 10px;
+    width: 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    backdrop-filter: blur(10px);
+}
+
+.indicator.active {
+    background-color: #FFD700;
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+.indicator:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.1);
+}
+
+/* Sunflower decorative elements */
+.sunflower-decoration {
+    background: radial-gradient(circle, #FFC107 30%, #FFD700 50%, #FFEB3B 70%);
+    border-radius: 50%;
+    position: relative;
+}
+
+.sunflower-decoration::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    height: 40%;
+    background: #8D4004;
+    border-radius: 50%;
+}
+
+/* Wedding button styles */
+.wedding-btn {
+    position: relative;
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    min-width: 200px;
+    text-decoration: none;
+    box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.wedding-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+    z-index: 1;
+}
+
+.wedding-btn:hover::before {
+    left: 100%;
+}
+
+.wedding-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.3);
+}
+
+.wedding-btn:active {
+    transform: translateY(0);
+}
+
+/* Primary button (RSVP) */
+.wedding-btn-primary {
+    background: linear-gradient(135deg, #2D5016, #3A6B1F);
+    color: white;
+}
+
+.wedding-btn-primary:hover {
+    background: linear-gradient(135deg, #3A6B1F, #4A7B2F);
+}
+
+/* Secondary button (Gift Us) */
+.wedding-btn-secondary {
+    background: linear-gradient(135deg, #FFD700, #FFC107);
+    color: #2D5016;
+}
+
+.wedding-btn-secondary:hover {
+    background: linear-gradient(135deg, #FFC107, #FFB300);
+}
+
+/* Accent button (Share Photos) */
+.wedding-btn-accent {
+    background: linear-gradient(135deg, #A0522D, #8D4004);
+    color: white;
+}
+
+.wedding-btn-accent:hover {
+    background: linear-gradient(135deg, #8D4004, #7A3503);
+}
+
+/* Floating petal animation */
+.petal {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #FFD700;
+    border-radius: 50% 0;
+    opacity: 0.6;
+    animation: float 15s infinite linear;
+}
+
+.petal-1 { top: -10px; left: 10%; animation-delay: 0s; animation-duration: 12s; }
+.petal-2 { top: -10px; left: 30%; animation-delay: 3s; animation-duration: 18s; }
+.petal-3 { top: -10px; left: 60%; animation-delay: 7s; animation-duration: 14s; }
+.petal-4 { top: -10px; left: 80%; animation-delay: 11s; animation-duration: 16s; }
+.petal-5 { top: -10px; left: 95%; animation-delay: 5s; animation-duration: 13s; }
+
+@keyframes float {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .slideshow-container {
+        width: 75%; /* Slightly larger on tablets */
+    }
+    
+    .slides-wrapper {
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .slideshow-container {
+        width: 75%; /* Almost full width on mobile */
+        padding: 15px;
+    }
+    
+    .slides-wrapper {
+        height: 250px;
+    }
+    
+    .slideshow-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .slideshow-nav.prev { left: 10px; }
+    .slideshow-nav.next { right: 10px; }
+    
+    .indicator {
+        height: 8px;
+        width: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .slideshow-container {
+        width: 95%;
+        padding: 12px;
+    }
+    
+    .slides-wrapper {
+        height: 200px;
+    }
+}

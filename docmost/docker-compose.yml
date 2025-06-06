@@ -4,10 +4,12 @@ services:
     depends_on:
       - db-docmost
       - redis
+    container_name: docmost
     environment:
-      APP_URL: ${APP_URL}
+      APP_URL: https://docmost.${DOMAIN}
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
+      #DATABASE_URL=postgres://user:password@db_container_name:5432/dbname
       REDIS_URL: ${REDIS_URL}
       HOST: "0.0.0.0"
       JWT_TOKEN_EXPIRES_IN: ${JWT_TOKEN_EXPIRES_IN}
@@ -25,13 +27,41 @@ services:
       PORT: 9093 #Be sure to specify this, otherwise it defaults to 3000
     ports:
       - "9093:9093"
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP redirect to HTTPS
+      - "traefik.http.routers.docmost.entrypoints=http"
+      - "traefik.http.routers.docmost.rule=Host(`docmost.${DOMAIN}`)||Host(`docmost.apps.${DOMAIN}`)"
+      - "traefik.http.routers.docmost.middlewares=docmost-https-redirect"
+      - "traefik.http.middlewares.docmost-https-redirect.redirectscheme.scheme=https"
+
+      # HTTPS route
+      - "traefik.http.routers.docmost-secure.entrypoints=https"
+      - "traefik.http.routers.docmost-secure.rule=Host(`docmost.${DOMAIN}`)||Host(`docmost.apps.${DOMAIN}`)"
+      - "traefik.http.routers.docmost-secure.tls=true"
+      - "traefik.http.routers.docmost-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.docmost-secure.service=docmost-service"
+
+      # Enable WebSocket headers via middleware
+      - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"
+      - "traefik.http.middlewares.websocket.headers.customrequestheaders.Upgrade=websocket"
+      - "traefik.http.routers.docmost-secure.middlewares=docmost-https-redirect,websocket"
+
+      # Target internal app port
+      - "traefik.http.services.docmost-service.loadbalancer.server.port=9093"
+
     restart: unless-stopped
     volumes:
       - ./config:/app/data/storage
+    networks:
+      - frontend
+      - docmost
 
 
   db-docmost:
     image: postgres:16-alpine
+    container_name: db-docmost
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -39,9 +69,18 @@ services:
     restart: unless-stopped
     volumes:
       - ./db_data:/var/lib/postgresql/data
+    networks:
+      - docmost
 
   redis:
     image: redis:7.2-alpine
+    container_name: redis-docmost
     restart: unless-stopped
     volumes:
       - ./redis_data:/data
+    networks:
+      - docmost
+networks:
+  frontend:
+    external: true
+  docmost:
