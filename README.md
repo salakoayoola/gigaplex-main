@@ -121,6 +121,13 @@ https://plugins.traefik.io/plugins/65d4cc8e769af9e5f2251e09/umami-analytics
 https://github.com/sapochat/brand-mcp/
 https://youtu.be/awh6OnY2to8?si=jANw9v5ENx6n0f9n
 
+## Mealie
+## Paperless
+## Beszel
+## Dawrich
+## Dumbassets
+## Channels-DVR server
+
 
 ### Project Management
 

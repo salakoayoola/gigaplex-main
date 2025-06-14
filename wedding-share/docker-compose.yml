@@ -1,0 +1,41 @@
+services:
+  wedding-share:
+    image: cirx08/wedding_share:latest
+    container_name: wedding-share
+    restart: unless-stopped
+    hostname: wedding-share
+    environment:
+      - TITLE=${TITLE}
+      - BASE_URL=${BASE_URL}
+      - ACCOUNT_OWNER_USERNAME=${ACCOUNT_OWNER_USERNAME}
+      - ACCOUNT_OWNER_PASSWORD=${ACCOUNT_OWNER_PASSWORD}
+      - DATABASE_TYPE=sqlite
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ENCRYPTION_SALT=${ENCRYPTION_SALT}
+      - SINGLE_GALLERY_MODE=true
+      - HOME_LINK=true
+      - LOGO=/custom_resources/logo.png
+      #- GALLERY_BANNER_IMAGE=/custom_resources/banner.jpg
+      - GALLERY_QUOTE="Please share your photos with us!, Upload them here"
+      - GALLERY_REQUIRE_REVIEW=false
+      - GALLERY_QR_CODE_ENABLED=false
+      - GALLERY_DOWNLOAD=false
+      - GALLERY_ALLOWED_FILE_TYPES=".jpg,.jpeg,.png,.mp4,.mov,.heic"
+      - ACCOUNT_OWNER_LOG_PASSWORD=false
+    volumes:
+      - ./data-volume-config:/app/config
+      - ./data-volume-thumbnails:/app/wwwroot/thumbnails
+      - ./data-volume-uploads:/app/wwwroot/uploads
+      - ./data-volume-custom-resources:/app/wwwroot/custom_resources
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wedding-share.rule=Host(`photos.${DOMAIN}`)||Host(`wedding-share.apps.${DOMAIN}`)"
+      - "traefik.http.routers.wedding-share.tls=true"
+      - "traefik.http.routers.wedding-share.tls.certresolver=cloudflare"
+      - "traefik.http.services.wedding-share.loadbalancer.server.port=5000"
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    external: true
