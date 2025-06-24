@@ -23,18 +23,21 @@ heyform/redis_data/*
 docmost/config/*
 docmost/db_data/*
 docmost/redis_data/*
+docmost/db_data/
 
 
 heimdall/
 
 #Immich
 immich-app/postgres/
+immich/immich-db/
 
 
 nextcloud/db/*
 nextcloud/html/*
 
 tailscale-apps/config/*
+tailscale-apps/config/
 
 #Traefik
 traefik/data/*

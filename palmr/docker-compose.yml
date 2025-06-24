@@ -1,0 +1,39 @@
+services:
+  palmr:
+    image: kyantech/palmr:latest
+    container_name: palmr
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - ENABLE_S3=false
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY} # Ensure this key is secure
+    volumes:
+      - palmr_data:/app/server
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      
+      # HTTP Router (redirect HTTP to HTTPS)
+      - "traefik.http.routers.palmr.entrypoints=http"
+      - "traefik.http.routers.palmr.rule=Host(`filetransfer.${DOMAIN}`)||Host(`filetransfer.apps.${DOMAIN}`)"
+      - "traefik.http.middlewares.palmr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.palmr.middlewares=palmr-https-redirect"
+
+      # HTTPS Router
+      - "traefik.http.routers.palmr-secure.entrypoints=https"
+      - "traefik.http.routers.palmr-secure.rule=Host(`filetransfer.${DOMAIN}`)||Host(`filetransfer.apps.${DOMAIN}`)"
+      - "traefik.http.routers.palmr-secure.tls=true"
+      - "traefik.http.routers.palmr-secure.tls.certresolver=cloudflare"
+
+      # Service configuration
+      - "traefik.http.routers.palmr-secure.service=palmr-service"
+      - "traefik.http.services.palmr-service.loadbalancer.server.port=5487"
+
+# networks and volumes
+networks:
+  frontend:
+    external: true
+
+volumes:
+  palmr_data:

@@ -1,6 +1,6 @@
 networks:
-  keydb:
-  mongo:
+  heyform-main:
+    name: heyform-main
   frontend:
     external: true
   backend:
@@ -44,10 +44,9 @@ services:
       - redis
 
     networks:
-      - mongo
-      - keydb
       - frontend
       - backend
+      - heyform-main
 
     labels:
       - "traefik.enable=true"
@@ -75,7 +74,7 @@ services:
     volumes:
       - ./config/mongodb_data:/data/db
     networks:
-      - mongo
+      - heyform-main
     command: --wiredTigerCacheSizeGB 0.25
 
   redis:
@@ -86,7 +85,7 @@ services:
     volumes:
       - ./config/redis_data:/data
     networks:
-      - keydb
+      - heyform-main
 
 volumes:
   mongodb_data:

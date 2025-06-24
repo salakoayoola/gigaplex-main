@@ -1,0 +1,93 @@
+name: immich
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    ports:
+      - '2283:2283'
+    depends_on:
+      - redis
+      - database
+    environment:
+      - IMMICH_SERVER_HOST=0.0.0.0
+    restart: always
+    healthcheck:
+      disable: false
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP Redirect to HTTPS
+      - "traefik.http.routers.immich.entrypoints=http"
+      - "traefik.http.routers.immich.rule=Host(`photos.${DOMAIN}`)||Host(`photos.apps.${DOMAIN}`)"
+      - "traefik.http.routers.immich.middlewares=immich-https-redirect"
+      - "traefik.http.middlewares.immich-https-redirect.redirectscheme.scheme=https"
+
+      # HTTPS Route
+      - "traefik.http.routers.immich-secure.entrypoints=https"
+      - "traefik.http.routers.immich-secure.rule=Host(`photos.${DOMAIN}`)||Host(`photos.apps.${DOMAIN}`)"
+      - "traefik.http.routers.immich-secure.tls=true"
+      - "traefik.http.routers.immich-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.immich-secure.service=immich-service"
+
+      # WebSocket Support
+      # - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"
+      # - "traefik.http.middlewares.websocket.headers.customrequestheaders.Upgrade=websocket"
+      # - "traefik.http.routers.immich-secure.middlewares=websocket"
+
+      # Target internal app port
+      - "traefik.http.services.immich-service.loadbalancer.server.port=2283"
+
+    networks:
+      - frontend
+      - immich
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      disable: false
+    networks:
+      - immich
+
+  redis:
+    container_name: immich_redis
+    image: docker.io/valkey/valkey:8-bookworm@sha256:ff21bc0f8194dc9c105b769aeabf9585fea6a8ed649c0781caeac5cb3c247884
+    restart: always
+    healthcheck:
+      test: redis-cli ping || exit 1
+    networks:
+      - immich
+
+  database:
+    container_name: immich_postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    volumes:
+      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - immich
+
+volumes:
+  model-cache:
+
+networks:
+  frontend:
+    external: true
+  immich:
+    name: immich
