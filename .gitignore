@@ -32,3 +32,4 @@ kopia/repository/*
 kopia/tmp/*
 
 backrest/backrest/*
+beszel/config/*
