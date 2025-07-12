@@ -1,0 +1,38 @@
+services:
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    networks:
+      - postgres
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    container_name: paperless-ngx
+    depends_on:
+      - broker
+    ports:
+      - "8000:8000"
+    volumes:
+      - /mnt/paperless-ngx/data:/usr/src/paperless/data
+      - /mnt/paperless-ngx/media:/usr/src/paperless/media
+      - /mnt/paperless-ngx/export:/usr/src/paperless/export
+      - /mnt/paperless-ngx/consume:/usr/src/paperless/consume
+    env_file: .env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: postgres_db_default
+      PAPERLESS_DBNAME: ayoola-gigaplex
+      PAPERLESS_DBUSER: ${POSTGRES_USER}
+      PAPERLESS_DBPASS: ${POSTGRES_PASSWORD}
+    networks:
+      - postgres
+
+volumes:
+  redisdata:
+
+networks:
+  postgres:
+    external: true

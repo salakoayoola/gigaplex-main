@@ -121,9 +121,25 @@ https://plugins.traefik.io/plugins/65d4cc8e769af9e5f2251e09/umami-analytics
 https://github.com/sapochat/brand-mcp/
 https://youtu.be/awh6OnY2to8?si=jANw9v5ENx6n0f9n
 
+## Beszel
+https://youtu.be/fTpGa4UH6lA
+Be sure to make these changes, to resolve this issue with missing memory stats on docker
+```bash
+sudo nano /boot/firmware/cmdline.txt
+```
+Append the line below to the existing parameters
+Important: Make sure everything stays on one line with spaces between parameters.
+```bash
+cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1
+```
+https://akashrajpurohit.com/blog/resolving-missing-memory-stats-in-docker-stats-on-raspberry-pi/
+
+sudo reboot once appended
+
 ## Mealie
 ## Paperless
-## Beszel
+
+
 ## Dawrich
 ## Dumbassets
 ## Channels-DVR server
@@ -140,6 +156,10 @@ https://developers.plane.so/self-hosting/methods/docker-compose#install-communit
 
 ### Wedding Share
 
+### Scriber App
+
+https://scriberr.app/
+
 ### Drive in the Cloud
 
 https://github.com/hudikhq/hoodik
@@ -154,6 +174,7 @@ https://rallly.co/
 
 ### Home Management
 https://grocy.info/
+Kitchen Owl - https://kitchenowl.org/
 
 ### Grafana
 ### Heyform

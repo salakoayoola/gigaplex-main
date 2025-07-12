@@ -77,3 +77,5 @@ wedding-share/data-volume-config/*
 wedding-share/data-volume-custom-resources/*
 wedding-share/data-volume-thumbnails/*
 wedding-share/data-volume-uploads/*
+
+postgres/data/*
