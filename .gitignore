@@ -23,3 +23,12 @@ pihole/etc-pihole/*
 pihole/etc-dnsmasq.d/*
 watchyourports/config/*
 traefik/data/*
+
+
+kopia/cache/*
+kopia/config/*
+kopia/logs/*
+kopia/repository/*
+kopia/tmp/*
+
+backrest/backrest/*

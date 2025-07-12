@@ -1,0 +1,42 @@
+services:
+  kopia:
+    container_name: kopia
+    image: kopia/kopia:latest
+    hostname: kopia-gigaplex
+    volumes:
+      # Operations
+      - ./config:/app/config
+      - ./cache:/app/cache
+      - ./logs:/app/logs
+      # Mount Local Folder
+      - ${PERSONAL_DATA}:/data:ro
+      - ${CONFIG_FILES}:/apps:ro
+      # Mount Repository and temporary folders
+      - ./repository:/repository
+      - ./tmp:/tmp:shared
+
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      disable: false
+    ports:
+      - '51515:51515'
+    command:
+      - server
+      - start
+      - --disable-csrf-token-checks
+      - --insecure
+      - --address=0.0.0.0:51515
+      - --server-username=${KOPIA_USER}
+      - --server-password=${KOPIA_PASSWORD}
+    environment:
+      # - KOPIA_PASSWORD=${KOPIA_PASSWORD}
+      # - USER=${KOPIA_USER}
+      - TZ=Europe/London
+    # networks:
+    #   - frontend
+
+# networks:
+#   frontend:
+#     external: true
