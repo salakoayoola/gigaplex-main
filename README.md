@@ -55,6 +55,16 @@ Clone a specific branch from a repository, the dot [.] tells git not to create a
 git clone --branch <branch_name> --single-branch <repository_url> .
 ```
 
+There'll come a time when your personal access token may expire and GitHub & VSCode aren't cooperating.
+Use this
+``` bash
+git push -u https://<your_github_username>:github_pat_<your_github_fine_access_grain-token>@github.com/<your_remo>.git <repo_branch>
+```
+Then save the credentials with
+```bash
+git config --global credential.helper store
+```
+
 ## Docker
 https://pimylifeup.com/raspberry-pi-docker/
 
