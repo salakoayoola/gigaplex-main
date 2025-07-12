@@ -1,0 +1,17 @@
+services:
+  pulsarr:
+    image: lakker/pulsarr:latest
+    container_name: pulsarr
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./data:/app/data
+      - .env:/app/.env
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - servarrnetwork
+networks:
+  servarrnetwork:
+    external: true

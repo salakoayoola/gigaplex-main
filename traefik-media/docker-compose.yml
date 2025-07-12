@@ -1,0 +1,54 @@
+services:
+  reverse-proxy:
+    image: traefik:latest
+    container_name: traefik_for_media
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - .env
+    networks:
+      - frontend
+      - backend
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+    environment:
+      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      - CF_DNS_API_EMAIL=${CF_DNS_API_EMAIL}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./data/acme.json:/acme.json
+      - ./data/config.yml:/etc/traefik/config.yml:ro
+      - ./data/logs:/var/log/traefik
+      - ./data/conf:/etc/traefik/conf
+    labels:
+      - "traefik.enable=true"
+      # Dashboard HTTP router (redirects to HTTPS)
+      - "traefik.http.routers.traefik-dashboard.entrypoints=http"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik-dashboard.media.${DOMAIN}`)||Host(`traefik-media.${DOMAIN}`)"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik-dashboard.middlewares=traefik-https-redirect"
+      # Dashboard HTTPS router (secured)
+      - "traefik.http.routers.traefik-dashboard-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-dashboard-secure.rule=Host(`traefik-dashboard.media.${DOMAIN}`)||Host(`traefik-media.${DOMAIN}`)"
+      - "traefik.http.routers.traefik-dashboard-secure.middlewares=traefik-auth"
+      - "traefik.http.routers.traefik-dashboard-secure.tls=true"
+      - "traefik.http.routers.traefik-dashboard-secure.tls.certresolver=cloudflare"
+      # TLS Domains (single domain/wildcard)
+      - "traefik.http.routers.traefik-dashboard-secure.tls.domains[0].main=media.${DOMAIN}"
+      - "traefik.http.routers.traefik-dashboard-secure.tls.domains[0].sans=*.media.${DOMAIN}"
+      # Internal API service (CRITICAL FIX)
+      - "traefik.http.routers.traefik-dashboard-secure.service=api@internal"
+      - "traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080"
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
