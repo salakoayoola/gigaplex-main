@@ -2,19 +2,22 @@ services:
   broker:
     image: docker.io/library/redis:7
     restart: unless-stopped
+    container_name: paperless-ngx-broker
     volumes:
       - redisdata:/data
     networks:
-      - postgres
+      - paperless-ngx
 
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     restart: unless-stopped
     container_name: paperless-ngx
     depends_on:
-      - broker
-    ports:
-      - "8000:8000"
+      - broker 
+      - tika 
+      - gotenberg
+    # ports:
+    #   - "8000:8000"
     volumes:
       - /mnt/paperless-ngx/data:/usr/src/paperless/data
       - /mnt/paperless-ngx/media:/usr/src/paperless/media
@@ -22,17 +25,61 @@ services:
       - /mnt/paperless-ngx/consume:/usr/src/paperless/consume
     env_file: .env
     environment:
+      # Paperless DB settings
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: postgres_db_default
       PAPERLESS_DBNAME: ayoola-gigaplex
       PAPERLESS_DBUSER: ${POSTGRES_USER}
       PAPERLESS_DBPASS: ${POSTGRES_PASSWORD}
+      # Tika and Gotenberg settings
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      #Other Paperless settings
+      PAPERLESS_URL: https://paperless.${DOMAIN}
+      PAPERLESS_APPS: "allauth.socialaccount.providers.openid_connect"
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: '{"openid_connect": {"APPS": [{"provider_id": "authentik","name": "Authentik SSO","client_id": "${AUTHENTIK_CLIENT_ID}","secret": "${AUTHENTIK_SECRET}","settings": { "server_url": "https://pentagon.${DOMAIN}/application/o/paperless-ngx/.well-known/openid-configuration"}}]}}'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paperless.entrypoints=http"
+      - "traefik.http.routers.paperless.rule=Host(`paperless.${DOMAIN}`)||Host(`paperless.apps.${DOMAIN}`)" # Expose both outside and the internal domains for Traefik
+      - "traefik.http.middlewares.paperless-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.paperless.middlewares=paperless-https-redirect"
+      - "traefik.http.routers.paperless-secure.entrypoints=https"
+      - "traefik.http.routers.paperless-secure.rule=Host(`paperless.${DOMAIN}`)||Host(`paperless.apps.${DOMAIN}`)" # Expose both outside and the internal domains for Traefik
+      - "traefik.http.routers.paperless-secure.tls=true"
+      - "traefik.http.routers.paperless-secure.service=paperless"
+      - "traefik.http.routers.paperless-secure.tls.certresolver=cloudflare"
+      - "traefik.http.services.paperless.loadbalancer.server.port=8000"
+      - "traefik.docker.network=frontend  "
     networks:
       - postgres
+      - frontend
+      - paperless-ngx
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:7.10
+    container_name: paperless-ngx-gotenberg
+    restart: unless-stopped
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      - paperless-ngx
+  tika:
+    image: ghcr.io/paperless-ngx/tika:latest
+    container_name: paperless-ngx-tika
+    restart: unless-stopped
+    networks:
+      - paperless-ngx
 
 volumes:
   redisdata:
 
 networks:
   postgres:
+    external: true
+  frontend:
+    external: true
+  paperless-ngx:
     external: true
