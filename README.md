@@ -1,5 +1,13 @@
 # gigaplex-main
 4 Raspberry Pis on a journey
+Enable VS Code SSH
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+Uncomment 
+
+AllowTcpForwarding yes
+
 ## Applications
 
 ## GIT
