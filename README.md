@@ -11,7 +11,7 @@ AllowTcpForwarding yes
 
 ctrl x & y to save then sudo reboot
 
-## Applications
+# Applications
 
 ## GIT
 Install Git
