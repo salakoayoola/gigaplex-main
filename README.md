@@ -8,6 +8,8 @@ Uncomment
 
 AllowTcpForwarding yes
 
+ctrl x & y to save then sudo reboot
+
 ## Applications
 
 ## GIT
