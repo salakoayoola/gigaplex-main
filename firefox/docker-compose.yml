@@ -6,7 +6,7 @@ services:
       - USER_ID=1000
       - GROUP_ID=1000
       - KEEP_APP_RUNNING=1
-      - APP_NAME=Firefox
+      - APP_NAME='Le Fire Fox'
       - APP_ICON=/usr/share/applications/firefox.desktop
     restart: unless-stopped
     ports:

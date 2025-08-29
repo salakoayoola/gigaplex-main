@@ -1,6 +1,7 @@
 # gigaplex-main
 4 Raspberry Pis on a journey
 
+## Housekeeping
 ### Enable VS Code SSH
 ```bash
 sudo nano /etc/ssh/sshd_config
@@ -10,7 +11,12 @@ Uncomment
 AllowTcpForwarding yes
 
 ctrl x & y to save then sudo reboot
-
+### Set Static IP
+Use the Network Manager Utility nmtui
+```bash
+sudo nmtui
+```
+Navigate to the relevant network connection and make modifications
 ## INFRARR
 
 ## GIT
