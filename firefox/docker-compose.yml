@@ -6,7 +6,7 @@ services:
       - USER_ID=1000
       - GROUP_ID=1000
       - KEEP_APP_RUNNING=1
-      - APP_NAME='Le Fire Fox'
+      - APP_NAME= Le Fire Fox
       - APP_ICON=/usr/share/applications/firefox.desktop
     restart: unless-stopped
     ports:
@@ -14,3 +14,11 @@ services:
       - "5900:5900" # VNC
     volumes:
       - ./config:/config
+    networks:
+      - frontend
+      - backend
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

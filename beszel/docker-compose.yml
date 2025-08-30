@@ -9,10 +9,13 @@ services:
       - ./config:/beszel_data
     environment:
       TZ: Europe/London
+    networks:
+      - frontend
+      - backend
 
   beszel-agent:
     image: "henrygd/beszel-agent"
-    container_name: "beszel-agent"
+    container_name: "beszel-agent-infrarr"
     restart: unless-stopped
     network_mode: host
     volumes:
@@ -25,3 +28,8 @@ services:
       TOKEN: ${TOKEN}
       HUB_URL: ${HUB_URL}
       TZ: Europe/London
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
