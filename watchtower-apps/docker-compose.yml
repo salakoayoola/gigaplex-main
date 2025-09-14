@@ -9,3 +9,11 @@ services:
     environment:
       - WATCHTOWER_CLEANUP=true
     restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

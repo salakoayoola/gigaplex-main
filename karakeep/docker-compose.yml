@@ -2,57 +2,61 @@ services:
   karakeep:
     image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
     container_name: karakeep
-    restart: always
+    restart: unless-stopped
     env_file: .env
     environment:
       MEILI_ADDR: http://meilisearch:7700
       BROWSER_WEB_URL: http://chrome:9222
       DATA_DIR: /data
       TZ: Europe/London
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PGID: 1000
+      PUID: 1000
     volumes:
       - ./config/karakeep/data:/data
-    depends_on:
-      - meilisearch
-      - chrome
+    ports:
+      - 3000:3000
     networks:
-      - karakeep
       - frontend
       - backend
     labels:
       - "traefik.enable=true"
-      # HTTP Router (for redirect)
+
+      # HTTP Router → redirect to HTTPS
       - "traefik.http.routers.karakeep.entrypoints=http"
-      - "traefik.http.routers.karakeep.rule=Host(`read.${DOMAIN}`)||Host(`read.apps.${DOMAIN}`)" # Expose both outside and the internal domains for Traefik
+      - "traefik.http.routers.karakeep.rule=Host(`read.${DOMAIN}`)||Host(`read.apps.${DOMAIN}`)"
+      - "traefik.http.routers.karakeep.middlewares=karakeep-https-redirect"
+
+      # Redirect middleware
       - "traefik.http.middlewares.karakeep-https-redirect.redirectscheme.scheme=https"
-      #- "traefik.http.routers.karakeep.middlewares=karakeep-https-redirect"
+
       # HTTPS Router
       - "traefik.http.routers.karakeep-secure.entrypoints=https"
-      - "traefik.http.routers.karakeep-secure.rule=Host(`read.${DOMAIN}`)||Host(`read.apps.${DOMAIN}`)" # Expose both outside and the internal domains for Traefik
+      - "traefik.http.routers.karakeep-secure.rule=Host(`read.${DOMAIN}`)||Host(`read.apps.${DOMAIN}`)"
       - "traefik.http.routers.karakeep-secure.tls=true"
       - "traefik.http.routers.karakeep-secure.tls.certresolver=cloudflare"
-      # Service configuration
-      - "traefik.http.routers.karakeep.middlewares=authentik-auth@file"
+      #- "traefik.http.routers.karakeep-secure.middlewares=authentik-auth@file"
       - "traefik.http.routers.karakeep-secure.service=karakeep-service"
+
+      # Backend service port
       - "traefik.http.services.karakeep-service.loadbalancer.server.port=3000"
 
   meilisearch:
-    image: getmeili/meilisearch:v1.13.3
+    image: getmeili/meilisearch:latest
     container_name: karakeep-meilisearch
-    restart: always
-    env_file:
-      - .env
+    restart: unless-stopped
+    env_file: .env
     environment:
       MEILI_NO_ANALYTICS: "true"
     volumes:
       - ./config/meilisearch/meili_data:/meili_data
     networks:
-      - karakeep
       - backend
 
   chrome:
-    image: gcr.io/zenika-hub/alpine-chrome:123
+    image: gcr.io/zenika-hub/alpine-chrome:124
     container_name: karakeep-chrome
-    restart: always
+    restart: unless-stopped
     command:
       - --no-sandbox
       - --disable-gpu
@@ -61,13 +65,10 @@ services:
       - --remote-debugging-port=9222
       - --hide-scrollbars
     networks:
-      - karakeep
       - backend
 
 networks:
-  karakeep:
-    external: true
   frontend:
-    external: true
+    external: true   # must exist and include Traefik
   backend:
-    external: true
+    external: true   # private app network

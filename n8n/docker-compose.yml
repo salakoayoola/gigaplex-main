@@ -11,12 +11,12 @@ services:
       - "traefik.enable=true"
       # HTTP Router
       - "traefik.http.routers.n8n.entrypoints=http"
-      - "traefik.http.routers.n8n.rule=Host(`n8n.${DOMAIN}`)||Host(`n8n.apps.${DOMAIN}`)"
+      - "traefik.http.routers.n8n.rule=Host(`n8n.${DOMAIN}`) || Host(`n8n.apps.${DOMAIN}`)"
       - "traefik.http.middlewares.n8n-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.n8n.middlewares=n8n-https-redirect"
       # HTTPS Router
       - "traefik.http.routers.n8n-secure.entrypoints=https"
-      - "traefik.http.routers.n8n-secure.rule=Host(`n8n.${DOMAIN}`)||Host(`n8n.apps.${DOMAIN}`)"
+      - "traefik.http.routers.n8n-secure.rule=Host(`n8n.${DOMAIN}`) || Host(`n8n.apps.${DOMAIN}`)"
       - "traefik.http.routers.n8n-secure.tls=true"
       - "traefik.http.routers.n8n-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.n8n-secure.service=n8n-service"
@@ -33,13 +33,14 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://n8n.${DOMAIN}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - TZ=${GENERIC_TIMEZONE}
       - PGID=1000
       - PUID=1000
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - N8N_RUNNERS_ENABLED=true
-      - N8N_TRUST_PROXY='true'
+      - N8N_TRUST_PROXY=true
       - N8N_PROXY_HOPS=1
-      #- N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
     volumes:
       - ./config/n8n_data:/home/node/.n8n
       - ./data/local-files:/files

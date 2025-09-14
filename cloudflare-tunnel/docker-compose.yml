@@ -9,11 +9,8 @@ services:
     networks:
       - frontend
       - backend
-      - proxy
 networks:
   frontend:
     external: true
   backend:
-    external: true
-  proxy:
     external: true

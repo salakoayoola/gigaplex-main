@@ -9,9 +9,10 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - /mnt/homeserver-config/postgres/data:/var/lib/postgresql/data
     networks:
       - postgres
+      - backend
   
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -25,7 +26,13 @@ services:
       - 8080:80
     networks:
       - postgres
+      - frontend
+      - backend
 
 networks:
   postgres:
+    external: true
+  backend:
+    external: true
+  frontend:
     external: true

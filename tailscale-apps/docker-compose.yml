@@ -1,7 +1,7 @@
 services:
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: tailscaled
+    container_name: tailscale-apps
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
@@ -12,6 +12,9 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale  # Required for persistence
       - TS_ROUTES=${TS_ROUTES}  # Optional: Routes to advertise (e.g.,
       - TS_EXTRA_ARGS=--accept-routes
+      - TZ=Europe/London
+    devices:
+      - /dev/net/tun:/dev/net/tun
     volumes:
       - ./config:/var/lib/tailscale  # For state persistence
       - /dev/net/tun:/dev/net/tun  # Required for networking

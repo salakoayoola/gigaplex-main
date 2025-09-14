@@ -91,3 +91,4 @@ networks:
     external: true
   immich:
     name: immich
+    external: true
