@@ -1,0 +1,74 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.2.0 # 
+    container_name: mealie
+    restart: always
+    ports:
+        - "9925:9000" # 
+    deploy:
+      resources:
+        limits:
+          memory: 1000M # 
+    volumes:
+      - ./config:/app/data/
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      # HTTP Router → redirect to HTTPS
+      - "traefik.http.routers.mealie.entrypoints=http"
+      - "traefik.http.routers.mealie.rule=Host(`lets-eat.${DOMAIN}`)||Host(`lets-eat.apps.${DOMAIN}`)"
+      - "traefik.http.routers.mealie.middlewares=mealie-https-redirect"
+      # Redirect middleware
+      - "traefik.http.middlewares.mealie-https-redirect.redirectscheme.scheme=https"
+      # HTTPS Router
+      - "traefik.http.routers.mealie-secure.entrypoints=https"
+      - "traefik.http.routers.mealie-secure.rule=Host(`lets-eat.${DOMAIN}`)||Host(`lets-eat.apps.${DOMAIN}`)"
+      - "traefik.http.routers.mealie-secure.tls=true"
+      - "traefik.http.routers.mealie-secure.tls.certresolver=cloudflare"
+      #- "traefik.http.routers.mealie-secure.middlewares=authentik-auth@file"
+      - "traefik.http.routers.mealie-secure.service=mealie-service"
+      # Backend service port
+      - "traefik.http.services.mealie-service.loadbalancer.server.port=9000"
+    env_file: .env
+    environment:
+      # Set Backend ENV Variables Here
+      ALLOW_SIGNUP: "false"
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/London
+      BASE_URL: https://lets-eat.${DOMAIN} #
+      # Database Settings
+      DB_ENGINE: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_SERVER: ${POSTGRES_SERVER}
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+
+  # postgres:
+  #   container_name: postgres
+  #   image: postgres:17
+  #   restart: always
+  #   volumes:
+  #     - mealie-pgdata:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_PASSWORD: mealie
+  #     POSTGRES_USER: mealie
+  #     PGUSER: mealie
+  #     POSTGRES_DB: mealie
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready"]
+  #     interval: 30s
+  #     timeout: 20s
+  #     retries: 3
+
+networks:
+   frontend:
+     external: true
+   backend:
+     external: true

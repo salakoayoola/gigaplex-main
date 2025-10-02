@@ -79,3 +79,20 @@ wedding-share/data-volume-thumbnails/*
 wedding-share/data-volume-uploads/*
 
 postgres/data/*
+
+affine/config/*
+mealie/config/*
+
+moodle-app/config/*
+moodle-app/data/*
+moodle-app/mariadb_data/*
+
+opencloud/config/*
+opencloud/data/*
+
+rclone/config/*
+/rclone/rclone-v1.71.1-linux-arm64
+rclone/rclone-v1.71.1-linux-arm64.zip
+
+ecourse/config/*
+ecourse/Dockerfile

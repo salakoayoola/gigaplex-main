@@ -1,0 +1,60 @@
+# Copyright Broadcom, Inc. All Rights Reserved.
+# SPDX-License-Identifier: APACHE-2.0
+
+services:
+  mariadb-moodle:
+    image: docker.io/bitnami/mariadb:latest
+    container_name: moodle-db
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_CHARACTER_SET=utf8mb4
+      - MARIADB_COLLATE=utf8mb4_unicode_ci
+    volumes:
+      - ./mariadb_data:/bitnami/mariadb
+    networks:
+      - backend
+  moodle:
+    image: docker.io/bitnami/moodle:5.0
+    container_name: moodle-app
+    ports:
+      - '8085:8080'
+      - '8443:8443'
+    environment:
+      - MOODLE_DATABASE_HOST=mariadb-moodle
+      - MOODLE_DATABASE_TYPE=mariadb
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_USER=${MARIADB_USER}
+      - MOODLE_DATABASE_PASSWORD=${MARIADB_PASSWORD}
+      - MOODLE_DATABASE_NAME=${MARIADB_DATABASE}
+      # Site configuration
+      - MOODLE_SITE_NAME=${MOODLE_SITE_NAME}
+      # Email configuration
+      - MOODLE_SMTP_HOST=${MOODLE_SMTP_HOST}
+      - MOODLE_SMTP_PORT_NUMBER=${MOODLE_SMTP_PORT_NUMBER}
+      - MOODLE_SMTP_USER=${MOODLE_SMTP_USER}
+      - MOODLE_SMTP_PASSWORD=${MOODLE_SMTP_PASSWORD}
+      - MOODLE_SMTP_PROTOCOL=${MOODLE_SMTP_PROTOCOL}
+      - MOODLE_EMAIL=${MOODLE_EMAIL}
+      # Admin user configuration
+      - MOODLE_USERNAME=${MOODLE_USERNAME}
+      - MOODLE_PASSWORD=${MOODLE_PASSWORD}
+
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./config:/bitnami/moodle
+      - ./data:/bitnami/moodledata
+    depends_on:
+      - mariadb-moodle
+    networks:
+      - backend
+      - frontend
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

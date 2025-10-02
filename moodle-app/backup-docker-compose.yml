@@ -1,0 +1,56 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: moodle-db
+    platform: linux/arm64
+    environment:
+      - MARIADB_USER=bn_moodle
+      - MARIADB_PASSWORD=bitnami
+      - MARIADB_DATABASE=bitnami_moodle
+      - ALLOW_EMPTY_PASSWORD=yes
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./mariadb_data:/bitnami/mariadb
+    networks:
+      # - backend
+      - moodle-network
+
+  moodle-app:
+    image: bitnami/moodle:latest
+    container_name: moodle-app
+    platform: linux/arm64
+    ports:
+      - 8085:8080  # Map local port
+      - 8443:8443   # Map local port
+    networks:
+      # - frontend   # For Traefik or reverse proxy (optional locally)
+      # - backend    # Private app network
+      - moodle-network
+    environment:
+      #MOODLE_DATABASE_TYPE: pgsql
+      MOODLE_DATABASE_HOST: mariadb
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MOODLE_DATABASE_USER: bn_moodle
+      MOODLE_DATABASE_PASSWORD: bitnami
+      MOODLE_DATABASE_NAME: bitnami_moodle
+      #MOODLE_DATABASE_PORT: 5432
+      # MOODLE_DATABASE_NAME: ${POSTGRES_DB}
+      # MOODLE_DATABASE_USER: ${POSTGRES_USER}
+      # MOODLE_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      # MOODLE_USERNAME: ${MOODLE_USERNAME}
+      # MOODLE_PASSWORD: ${MOODLE_PASSWORD}
+      # MOODLE_EMAIL: ${MOODLE_EMAIL}
+      PUID: 1000
+      PGID: 1000
+    depends_on:
+      - mariadb
+    volumes:
+      #- ./config:/var/www/html  # Moodle application files
+      - ./config:/bitnami/moodle  # Moodle application files
+      - ./data:/bitnami/moodledata  # Moodle uploads, course content
+      #- ./apache-servername.conf:/etc/apache2/conf-enabled/servername.conf:ro
+
+networks:
+  moodle-network:
+    driver: bridge

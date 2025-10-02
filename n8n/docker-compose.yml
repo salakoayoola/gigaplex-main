@@ -1,6 +1,6 @@
 services:  
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    image: n8nio/n8n:latest
     restart: always
     networks:
       - frontend
@@ -27,23 +27,52 @@ services:
       #- "traefik.http.routers.n8n-secure.middlewares=default-security-headers@file"
 
     environment:
+      # General n8n configurations
       - N8N_HOST=n8n.${DOMAIN}
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
-      - NODE_ENV=production
       - WEBHOOK_URL=https://n8n.${DOMAIN}/
-      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
-      - TZ=${GENERIC_TIMEZONE}
-      - PGID=1000
-      - PUID=1000
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - N8N_RUNNERS_ENABLED=true
+
+      # Security configurations
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
       - N8N_TRUST_PROXY=true
       - N8N_PROXY_HOPS=1
-      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+
+      # Timezone configurations
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - TZ=${GENERIC_TIMEZONE}
+
+      # System configurations
+      - NODE_ENV=production
+      - PGID=1000
+      - PUID=1000
+
+      # Execution configurations
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=90   # keep 90 days
+
+      # Feature configurations
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true
+      - N8N_HIDE_UI_NAGS=true
+
+      # Postgres configurations
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+
     volumes:
-      - ./config/n8n_data:/home/node/.n8n
-      - ./data/local-files:/files
+      - ${CONFIG_LOCATION}:/home/node/.n8n
+      - ${DATA_LOCATION}:/files
 
 networks:
     frontend:

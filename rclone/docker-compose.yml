@@ -1,0 +1,42 @@
+services:
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    command: rcd --rc-web-gui --rc-addr 0.0.0.0:5572 --rc-web-fetch-url=https://api.github.com/repos/rclone/rclone-webui-react/releases/latest --rc-web-gui-update --rc-user ${RC_USER} --rc-pass ${RC_PASS} -vv --checksum --transfers=4 --checkers=4 --contimeout=60s --timeout=300s --retries=3 --low-level-retries=10 --stats=1s --stats-file-name-length=0
+    volumes:
+      - ./config:/config/rclone
+      - ${CONFIG_LOCATION}/sync_script:/sync_script
+      - ${DATA_LOCATION}:/data
+    environment:
+      - PHP_TZ=Europe/London
+      # Remove these lines - they're redundant since you're using CLI args
+      # - RCLONE_RC_USER=${RC_USER}
+      # - RCLONE_RC_PASS=${RC_PASS}
+    networks:
+      - backend
+      - postgres
+    labels:
+      - "traefik.enable=true"
+      # HTTP Router
+      - "traefik.http.routers.rclone-dashboard.entrypoints=http"  # Fixed missing quote
+      - "traefik.http.routers.rclone-dashboard.rule=Host(`backup.${DOMAIN}`) || Host(`backup.apps.${DOMAIN}`)"
+      - "traefik.http.middlewares.rclone-dashboard-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.rclone-dashboard.middlewares=rclone-dashboard-https-redirect"
+      # HTTPS Router
+      - "traefik.http.routers.rclone-dashboard-secure.entrypoints=https"
+      - "traefik.http.routers.rclone-dashboard-secure.rule=Host(`backup.${DOMAIN}`) || Host(`backup.apps.${DOMAIN}`)"
+      - "traefik.http.routers.rclone-dashboard-secure.tls=true"
+      - "traefik.http.routers.rclone-dashboard-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.rclone-dashboard-secure.service=rclone-dashboard-service"
+      - "traefik.http.services.rclone-dashboard-service.loadbalancer.server.port=5572"
+      - "traefik.http.routers.rclone-dashboard-secure.middlewares=default-security-headers@file"  # Moved from HTTP router
+      - "traefik.docker.network=backend"
+
+networks:
+  backend:
+    external: true
+  postgres:
+    external: true

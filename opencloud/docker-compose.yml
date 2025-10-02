@@ -1,0 +1,45 @@
+services:
+  opencloud:
+    image: opencloudeu/opencloud-rolling:latest
+    container_name: opencloud-rolling
+    restart: unless-stopped
+    env_file: .env
+    entrypoint:
+       - /bin/sh
+    command: ["-c", "opencloud init --insecure true || true; opencloud server"]
+    environment:
+      - IDM_CREATE_DEMO_USERS=false
+      - OC_URL=https://Your_Domain.com:9200
+      - IDM_ADMIN_PASSWORD=admin
+      - OC_INSECURE=true
+      - JWT_SECRET=WsAm59YfhLaTER2SXJ
+      - PROXY_ENABLE_BASIC_AUTH=true
+    volumes:
+      - ./config:/etc/opencloud
+      - ./data:/var/lib/opencloud
+    # ports:
+    #   - 4000:4000
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP Router → redirect to HTTPS
+      - "traefik.http.routers.opencloud.entrypoints=http"
+      - "traefik.http.routers.opencloud.rule=Host(`cloud.${DOMAIN}`)||Host(`cloud.apps.${DOMAIN}`)"
+      - "traefik.http.routers.opencloud.middlewares=opencloud-https-redirect"
+
+      # Redirect middleware
+      - "traefik.http.middlewares.opencloud-https-redirect.redirectscheme.scheme=https"
+
+      # HTTPS Router
+      - "traefik.http.routers.opencloud-secure.entrypoints=https"
+      - "traefik.http.routers.opencloud-secure.rule=Host(`cloud.${DOMAIN}`)||Host(`cloud.apps.${DOMAIN}`)"
+      - "traefik.http.routers.opencloud-secure.tls=true"
+      - "traefik.http.routers.opencloud-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.opencloud-secure.middlewares=authentik-auth@file"
+      - "traefik.http.routers.opencloud-secure.service=opencloud-service"
+
+      # Backend service port
+      - "traefik.http.services.opencloud-service.loadbalancer.server.port=4000"

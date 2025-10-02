@@ -35,7 +35,7 @@ services:
       - "traefik.http.routers.karakeep-secure.rule=Host(`read.${DOMAIN}`)||Host(`read.apps.${DOMAIN}`)"
       - "traefik.http.routers.karakeep-secure.tls=true"
       - "traefik.http.routers.karakeep-secure.tls.certresolver=cloudflare"
-      #- "traefik.http.routers.karakeep-secure.middlewares=authentik-auth@file"
+      - "traefik.http.routers.karakeep-secure.middlewares=authentik-auth@file"
       - "traefik.http.routers.karakeep-secure.service=karakeep-service"
 
       # Backend service port

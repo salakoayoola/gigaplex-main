@@ -1,0 +1,20 @@
+services:
+  ecourse:
+    build: .
+    container_name: ecourse
+    ports:
+      - "8090:8090"
+    volumes:
+      - /mnt/homeserver-config/ecourse/data:/eCourse/pb/pb_data        # Database + uploads
+      - ./config:/eCourse/pb/pb_migrations # Config + migrations
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/London
+    networks:
+      - frontend
+      - backend
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

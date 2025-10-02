@@ -1,0 +1,127 @@
+name: affine
+services:
+  affine:
+    image: ghcr.io/toeverything/affine:${AFFINE_REVISION:-stable}
+    container_name: affine_server
+    ports:
+      - '${PORT:-3010}:3010'
+    depends_on:
+      affine-redis:
+        condition: service_healthy
+      # postgres:
+      #   condition: service_healthy
+      affine_migration:
+        condition: service_completed_successfully
+    volumes:
+      # custom configurations
+      - ${UPLOAD_LOCATION}:/root/.affine/storage
+      - ${CONFIG_LOCATION}:/root/.affine/config
+    env_file:
+      - .env
+    environment:
+      - REDIS_SERVER_HOST=affine-redis
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_DATABASE:-affine}
+      - AFFINE_INDEXER_ENABLED=false
+      - TZ=Europe/London
+      - AFFINE_SERVER_EXTERNAL_URL=${AFFINE_URL}
+      - AFFINE_SERVER_HOST=${AFFINE_HOSTNAME}
+      - AFFINE_SERVER_HTTPS=false
+      - MAILER_HOST=${AFFINE_SMTP_ADDRESS}
+      - MAILER_PORT=${AFFINE_SMTP_PORT}
+      - MAILER_USER=${AFFINE_SMTP_USER_NAME}
+      - MAILER_PASSWORD=${AFFINE_SMTP_PASSWORD}
+      - MAILER_SENDER=${AFFINE_EMAIL_FROM}
+      - TELEMETRY_ENABLE=false
+
+    labels:
+    - "traefik.enable=true"
+    - "traefik.docker.network=frontend"
+
+    # HTTP Router → redirect to HTTPS
+    - "traefik.http.routers.affine.entrypoints=http"
+    - "traefik.http.routers.affine.rule=Host(`docs.${DOMAIN}`) || Host(`docs.apps.${DOMAIN}`)"
+    - "traefik.http.routers.affine.middlewares=affine-https-redirect"
+
+    # Redirect middleware definition
+    - "traefik.http.middlewares.affine-https-redirect.redirectscheme.scheme=https"
+
+    # HTTPS Router
+    - "traefik.http.routers.affine-secure.entrypoints=https"
+    - "traefik.http.routers.affine-secure.rule=Host(`docs.${DOMAIN}`) || Host(`docs.apps.${DOMAIN}`)"
+    - "traefik.http.routers.affine-secure.tls=true"
+    - "traefik.http.routers.affine-secure.tls.certresolver=cloudflare"
+    - "traefik.http.routers.affine-secure.service=affine-service"
+
+    # Backend service port
+    - "traefik.http.services.affine-service.loadbalancer.server.port=3010"
+
+    # Optional: gzip compression
+    - "traefik.http.middlewares.compresstraefik.compress=true"
+    - "traefik.http.routers.affine-secure.middlewares=compresstraefik"
+
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+
+  affine_migration:
+    image: ghcr.io/toeverything/affine:${AFFINE_REVISION:-stable}
+    container_name: affine_migration_job
+    volumes:
+      # custom configurations
+      - ${UPLOAD_LOCATION}:/root/.affine/storage
+      - ${CONFIG_LOCATION}:/root/.affine/config
+    command: ['sh', '-c', 'node ./scripts/self-host-predeploy.js']
+    env_file:
+      - .env
+    environment:
+      - REDIS_SERVER_HOST=affine-redis
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_DATABASE:-affine}
+      - AFFINE_INDEXER_ENABLED=false
+      - TZ=Europe/London
+    networks:
+      - backend
+    depends_on:
+      # postgres:
+      #   condition: service_healthy
+      affine-redis:
+        condition: service_healthy
+
+  affine-redis:
+    image: redis
+    container_name: affine_redis
+    healthcheck:
+      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
+
+  # postgres:
+  #   image: pgvector/pgvector:pg16
+  #   container_name: affine_postgres
+  #   volumes:
+  #     - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_USER: ${DB_USERNAME}
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: ${DB_DATABASE:-affine}
+  #     POSTGRES_INITDB_ARGS: '--data-checksums'
+  #     # you better set a password for you database
+  #     # or you may add 'POSTGRES_HOST_AUTH_METHOD=trust' to ignore postgres security policy
+  #     POSTGRES_HOST_AUTH_METHOD: trust
+  #   healthcheck:
+  #     test:
+  #       ['CMD', 'pg_isready', '-U', "${DB_USERNAME}", '-d', "${DB_DATABASE:-affine}"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped

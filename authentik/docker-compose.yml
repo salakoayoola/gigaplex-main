@@ -50,8 +50,8 @@ services:
       - AUTHENTIK_POSTGRESQL__PASSWORD=${POSTGRES_PASSWORD}
       - AUTHENTIK_ERROR_REPORTING__ENABLED=true
     volumes:
-      - ./config/media:/media
-      - ./config/custom-templates:/templates
+      - /mnt/homeserver-config/authentik/media:/media
+      - /mnt/homeserver-config/authentik/custom-templates:/templates
     labels:
       - "traefik.enable=true"
       # HTTPS Router
@@ -84,9 +84,9 @@ services:
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./config/media:/media
-      - ./config/certs:/certs
-      - ./config/custom-templates:/templates
+      - /mnt/homeserver-config/authentik/media:/media
+      - /mnt/homeserver-config/authentik/certs:/certs
+      - /mnt/homeserver-config/authentik/custom-templates:/templates
     depends_on:
       - redis
     networks:

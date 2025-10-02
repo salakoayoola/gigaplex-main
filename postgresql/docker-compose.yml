@@ -28,6 +28,35 @@ services:
       - postgres
       - frontend
       - backend
+# db-backup:
+#     image: rclone/rclone:latest
+#     container_name: postgres_db_backup
+#     restart: unless-stopped
+#     privileged: true
+#     security_opt:
+#       - apparmor:unconfined
+#     cap_add:
+#       - SYS_ADMIN
+#     volumes:
+#       - /mnt/homeserver-config/postgres/backups:/backups
+#       - /mnt/homeserver-config/rclone:/config/rclone  # rclone config dir
+#     environment:
+#       - PGPASSWORD=${PASSWORD}
+#       - PHP_TZ=Europe/London
+#     entrypoint: /bin/sh -c
+#     command: |
+#       "
+#       while true; do
+#         TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+#         pg_dump -h db -U ${USERNAME} --format=custom --file=/backups/backup-$TIMESTAMP.dump
+#         rclone copy /backups/backup-$TIMESTAMP.dump postgres-backblaze:postgres-backups
+#         sleep 86400
+#       done
+#       "
+#     depends_on:
+#       - db
+#     networks:
+#       - postgres
 
 networks:
   postgres:
