@@ -2,7 +2,6 @@ services:
   docmost:
     image: docmost/docmost:latest
     depends_on:
-      - db-docmost
       - redis
     container_name: docmost
     environment:
@@ -24,7 +23,7 @@ services:
       TZ: ${TZ}
       PGID: ${PGID}
       PUID: ${PUID}
-      PORT: 9093 #Be sure to specify this, otherwise it defaults to 3000
+      PORT: ${PORT}
     ports:
       - "9093:9093"
     labels:
@@ -32,13 +31,13 @@ services:
 
       # HTTP redirect to HTTPS
       - "traefik.http.routers.docmost.entrypoints=http"
-      - "traefik.http.routers.docmost.rule=Host(`docmost.${DOMAIN}`)||Host(`docmost.apps.${DOMAIN}`)"
+      - "traefik.http.routers.docmost.rule=Host(`notes.${DOMAIN}`)||Host(`notes.apps.${DOMAIN}`)"
       - "traefik.http.routers.docmost.middlewares=docmost-https-redirect"
       - "traefik.http.middlewares.docmost-https-redirect.redirectscheme.scheme=https"
 
       # HTTPS route
       - "traefik.http.routers.docmost-secure.entrypoints=https"
-      - "traefik.http.routers.docmost-secure.rule=Host(`docmost.${DOMAIN}`)||Host(`docmost.apps.${DOMAIN}`)"
+      - "traefik.http.routers.docmost-secure.rule=Host(`notes.${DOMAIN}`)||Host(`notes.apps.${DOMAIN}`)"
       - "traefik.http.routers.docmost-secure.tls=true"
       - "traefik.http.routers.docmost-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.docmost-secure.service=docmost-service"
@@ -56,21 +55,7 @@ services:
       - ./config:/app/data/storage
     networks:
       - frontend
-      - docmost
-
-
-  db-docmost:
-    image: postgres:16-alpine
-    container_name: db-docmost
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    restart: unless-stopped
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
-    networks:
-      - docmost
+      - backend
 
   redis:
     image: redis:7.2-alpine
@@ -79,8 +64,10 @@ services:
     volumes:
       - ./redis_data:/data
     networks:
-      - docmost
+      - backend
+
 networks:
   frontend:
     external: true
-  docmost:
+  backend:
+    external: true

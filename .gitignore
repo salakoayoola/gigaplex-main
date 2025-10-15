@@ -81,6 +81,8 @@ wedding-share/data-volume-uploads/*
 postgres/data/*
 
 affine/config/*
+affine/data/*
+
 mealie/config/*
 
 moodle-app/config/*
@@ -96,3 +98,22 @@ rclone/rclone-v1.71.1-linux-arm64.zip
 
 ecourse/config/*
 ecourse/Dockerfile
+
+backrest-apps/backrest/*
+
+frappe-learning/config/*
+
+palmr/config/*
+
+
+salakoayoola-xyz/portfolio-images/*
+salakoayoola-xyz/docker/*
+salakoayoola-xyz/.dockerignore
+salakoayoola-xyz/.env
+salakoayoola-xyz/web/*
+
+docmost/config/*
+docmost/redis_data/*
+
+postgresql/data/*
+postgresql/config/*

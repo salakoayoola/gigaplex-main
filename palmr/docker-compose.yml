@@ -7,8 +7,13 @@ services:
     environment:
       - ENABLE_S3=false
       - ENCRYPTION_KEY=${ENCRYPTION_KEY} # Ensure this key is secure
+      - DOWNLOAD_MAX_CONCURRENT=12
+      - DOWNLOAD_MEMORY_THRESHOLD_MB=4096
+      - DOWNLOAD_QUEUE_SIZE=60
+      - DOWNLOAD_MIN_FILE_SIZE_GB=5.0
+      - DOWNLOAD_AUTO_SCALE=false
     volumes:
-      - palmr_data:/app/server
+      - ./config:/app/server
     networks:
       - frontend
     labels:
@@ -34,6 +39,3 @@ services:
 networks:
   frontend:
     external: true
-
-volumes:
-  palmr_data:
