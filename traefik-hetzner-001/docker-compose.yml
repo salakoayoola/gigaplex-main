@@ -1,0 +1,152 @@
+services:
+  hetzner_traefik:
+    image: traefik:latest
+    container_name: traefik_for_hetzner
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - .env
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8082:8082"
+      - "8080:8080"  # Traefik dashboard port
+    environment:
+      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      - CF_DNS_API_EMAIL=${CF_DNS_API_EMAIL}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./data/acme.json:/acme.json:rw
+      - ./data/config.yml:/etc/traefik/config.yml:ro
+      - ./data/logs:/var/log/traefik:rw
+      - ./data/conf:/etc/traefik/conf:ro
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+    labels:
+      - "traefik.enable=true"
+      
+      # CrowdSec bouncer middleware
+      - "traefik.http.middlewares.crowdsec-bouncer.forwardauth.address=http://crowdsec-bouncer:8080/api/v1/forwardAuth"
+      - "traefik.http.middlewares.crowdsec-bouncer.forwardauth.trustForwardHeader=true"
+      
+      # HTTP to HTTPS redirect
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN1}`)"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      
+      # HTTPS redirect middleware
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.permanent=true"
+      
+      # Basic auth middleware
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
+      - "traefik.http.middlewares.traefik-auth.basicauth.realm=Traefik Dashboard"
+      
+      # HTTPS secure router
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${DOMAIN1}`)"
+      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth,crowdsec-bouncer"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      
+      # TLS domains
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN1}"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN1}"
+      - "traefik.http.routers.traefik-secure.tls.domains[1].main=${DOMAIN2}"
+      - "traefik.http.routers.traefik-secure.tls.domains[1].sans=*.${DOMAIN2}"
+      - "traefik.http.routers.traefik-secure.tls.domains[2].main=${DOMAIN3}"
+      - "traefik.http.routers.traefik-secure.tls.domains[2].sans=*.${DOMAIN3}"
+      - "traefik.http.routers.traefik-secure.tls.domains[3].main=${DOMAIN4}"
+      - "traefik.http.routers.traefik-secure.tls.domains[3].sans=*.${DOMAIN4}"
+    
+    depends_on:
+      - crowdsec
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      COLLECTIONS: "crowdsecurity/linux crowdsecurity/http-cve crowdsecurity/wordpress"
+      # Changed http-cves to http-cve ^^
+    volumes:
+      - ./data/crowdsec/db:/var/lib/crowdsec/data/
+      - ./data/crowdsec/config:/etc/crowdsec/
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/syslog:/var/log/syslog:ro
+    healthcheck:
+      test: ["CMD", "cscli", "lapi", "status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+  crowdsec-bouncer:
+    image: fbonalair/traefik-crowdsec-bouncer:0.1.1
+    container_name: crowdsec-bouncer
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+      PORT: "8100"  # Add this line to set the port
+    ports:
+      - "8100:8100"  # Changed from 8100:8100 to match PORT env var
+    depends_on:
+      - crowdsec
+    # healthcheck:
+    #   test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8100/api/v1/ping"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
+
