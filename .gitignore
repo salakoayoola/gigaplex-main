@@ -1,0 +1,98 @@
+# Environment variables
+.env
+
+# Development files
+*.log
+.json
+
+# Dependencies
+node_modules/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Database
+postgres/data/*
+postgresql/data/*
+postgresql/config/*
+
+# Docker application configs
+## Authentication
+authentik/config/*
+
+## AI/LLM
+ollama/config/*
+llm/config/*
+llm/data/*
+llm/LocalAI/*
+liteLLM/config/*
+liteLLM/data/*
+openwebui/config/*
+
+## Document Management
+docmost/config/*
+docmost/db_data/*
+docmost/redis_data/*
+
+## Forms
+heyform/assets/*
+heyform/mongodb_data/*
+heyform/redis_data/*
+heyform/config/*
+heyform-ea_in_bloom/assets-ea*
+heyform-ea_in_bloom/config*
+
+## File Storage & Sharing
+nextcloud/db/*
+nextcloud/html/*
+wedding-share/data-volume-config/*
+wedding-share/data-volume-custom-resources/*
+wedding-share/data-volume-thumbnails/*
+wedding-share/data-volume-uploads/*
+
+## Networking & Infrastructure
+heimdall/
+traefik/data/*
+traefik/data/acme.json
+tailscale-apps/config/*
+mickey7-nginx/config/ssl/*
+mickey7-nginx/config/templates/*
+tailscale/config/*
+beszel-htz001/config/*
+
+## Productivity & Organization
+linkwarden/config/*
+karakeep/config/*
+n8n/config/*
+n8n/data/*
+affine/config/*
+affine/data/*
+mealie/config/*
+
+## Learning Management
+moodle-app/config/*
+moodle-app/data/*
+moodle-app/mariadb_data/*
+ecourse/config/*
+ecourse/Dockerfile
+frappe-learning/config/*
+
+## Cloud & Storage
+opencloud/config/*
+opencloud/data/*
+rclone/config/*
+/rclone/rclone-v1.71.1-linux-arm64
+rclone/rclone-v1.71.1-linux-arm64.zip
+
+## Websites & Applications
+ea-in-bloom/web/images/*
+salakoayoola-xyz/portfolio-images/*
+salakoayoola-xyz/docker/*
+salakoayoola-xyz/.dockerignore
+salakoayoola-xyz/.env
+salakoayoola-xyz/web/*
+
+## Others
+backrest-apps/backrest/*
+palmr/config/*
