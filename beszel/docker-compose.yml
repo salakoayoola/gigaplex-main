@@ -1,7 +1,7 @@
 services:
   beszel-agent:
     image: "henrygd/beszel-agent"
-    container_name: "beszel-htz001-agent"
+    container_name: "ovh001-beszel-agent"
     restart: always
     network_mode: host
     volumes:

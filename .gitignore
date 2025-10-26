@@ -60,6 +60,7 @@ mickey7-nginx/config/ssl/*
 mickey7-nginx/config/templates/*
 tailscale/config/*
 beszel-htz001/config/*
+beszel/config/*
 
 ## Productivity & Organization
 linkwarden/config/*
