@@ -13,6 +13,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     environment:
       - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
       - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
@@ -48,6 +49,7 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[3].sans=*.${DOMAIN4}"
       
       - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.services.traefik-service.loadbalancer.server.port=8080"
 
 networks:
   frontend:

@@ -10,7 +10,7 @@ services:
       - TS_HOSTNAME=${TS_HOSTNAME}  # Optional: Set a hostname for the Tailscale node
       - TS_AUTHKEY=${TS_AUTHKEY}  # Required: Your auth key from Tailscale admin console
       - TS_STATE_DIR=/var/lib/tailscale  # Required for persistence
-      - TS_EXTRA_ARGS=--accept-routes
+      - TS_EXTRA_ARGS=--accept-routes --accept-dns  # Optional: Accept routes and DNS settings from the Tailscale network
       - TZ=Europe/London
     devices:
       - /dev/net/tun:/dev/net/tun

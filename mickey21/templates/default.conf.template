@@ -1,0 +1,25 @@
+server {
+    listen ${NGINX_PORT};
+    server_name ${NGINX_HOST};
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proper MIME types
+    include /etc/nginx/mime.types;
+    
+    # Cache static assets
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico)$ {
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+    }
+    
+    # Gzip compression
+    gzip on;
+    gzip_types text/plain text/css application/javascript;
+    gzip_min_length 1000;
+}

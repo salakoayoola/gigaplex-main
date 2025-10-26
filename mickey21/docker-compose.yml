@@ -1,0 +1,38 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: mickey7-nginx
+    restart: unless-stopped
+    volumes:
+      - ./config/templates:/etc/nginx/templates
+      - ./config/html:/usr/share/nginx/html
+    environment:
+      - NGINX_HOST=mickey21.${DOMAIN}
+      - NGINX_PORT=80
+      - TZ=Europe/London
+      - PGID=1000
+      - PUID=1000
+    networks:
+      - frontend
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      # HTTP Router (for redirect)
+      - "traefik.http.routers.nginx.entrypoints=http"
+      - "traefik.http.routers.nginx.rule=Host(`mickey21.${DOMAIN}`)||Host(`mickey21.home.${DOMAIN}`)" #Expose both outside and the internal domains for Traefik
+      - "traefik.http.middlewares.nginx-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.nginx.middlewares=nginx-https-redirect"
+      # HTTPS Router
+      - "traefik.http.routers.nginx-secure.entrypoints=https"
+      - "traefik.http.routers.nginx-secure.rule=Host(`mickey21.${DOMAIN}`)||Host(`mickey21.home.${DOMAIN}`)" #Expose both outside and the internal domains for Traefik
+      - "traefik.http.routers.nginx-secure.tls=true"
+      - "traefik.http.routers.nginx-secure.tls.certresolver=cloudflare"
+      # Service configuration
+      #- "traefik.http.routers.nginx-secure.middlewares=authentik@file"
+      - "traefik.http.services.nginx-service.loadbalancer.server.port=80"
+      - "traefik.http.routers.nginx-secure.service=nginx-service"
+
+networks:
+  frontend:
+    external: true

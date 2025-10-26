@@ -1,0 +1,345 @@
+/* Animation Styles */
+
+/* Pulse Animation */
+.pulse {
+    animation: pulse-effect 2s infinite;
+}
+
+@keyframes pulse-effect {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+/* Typing Effect for Terminal */
+.typed-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid var(--highlight);
+    animation: typing 2s steps(30, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--highlight) }
+}
+
+/* Terminal typing style for each line */
+.terminal-content .line:nth-child(1) .typed-text {
+    animation-duration: 1.5s;
+    animation-delay: 0s;
+}
+
+.terminal-content .line:nth-child(2) .typed-text {
+    animation-duration: 1.5s;
+    animation-delay: 1.5s;
+}
+
+.terminal-content .line:nth-child(3) .typed-text {
+    animation-duration: 1s;
+    animation-delay: 3s;
+}
+
+.terminal-content .line:nth-child(4) .typed-text {
+    animation-duration: 2s;
+    animation-delay: 4s;
+}
+
+.terminal-content .line:nth-child(5) .typed-text {
+    animation-duration: 1.5s;
+    animation-delay: 6s;
+}
+
+/* Typewriter effect for the subtitle */
+.typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+    border-right: 3px solid var(--highlight);
+    animation-delay: 0.5s;
+    animation-fill-mode: forwards;
+    width: 0;
+}
+
+/* Glow effect for buttons */
+.glow-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.glow-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle,
+        rgba(81, 203, 238, 0.3) 0%,
+        rgba(81, 203, 238, 0) 70%
+    );
+    opacity: 0;
+    transform: scale(0.5);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.glow-btn:hover::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Breathing effect for indicators */
+.panel-indicator.operational {
+    animation: breathe-green 3s infinite;
+}
+
+.panel-indicator.warning {
+    animation: breathe-yellow 2s infinite;
+}
+
+.panel-indicator.critical {
+    animation: breathe-red 1s infinite;
+}
+
+@keyframes breathe-green {
+    0%, 100% { box-shadow: 0 0 5px var(--success); }
+    50% { box-shadow: 0 0 15px var(--success); }
+}
+
+@keyframes breathe-yellow {
+    0%, 100% { box-shadow: 0 0 5px var(--warning); }
+    50% { box-shadow: 0 0 15px var(--warning); }
+}
+
+@keyframes breathe-red {
+    0%, 100% { box-shadow: 0 0 5px var(--danger); }
+    50% { box-shadow: 0 0 15px var(--danger); }
+}
+
+/* Map cell hover effect */
+.map-cell {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.map-cell:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(81, 203, 238, 0.3);
+    z-index: 10;
+}
+
+/* Resource bar animation */
+.resource-fill {
+    transition: width 1s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.resource-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    animation: resource-shine 2s infinite;
+}
+
+@keyframes resource-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Fade in animation for sections */
+.terminal-section, .colony-map-section, .expendables-section,
+.controls-section, .mission-section, .resources-section {
+    animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Staggered fade-in animations */
+.terminal-section { animation-delay: 0.1s; }
+.colony-map-section { animation-delay: 0.2s; }
+.expendables-section { animation-delay: 0.3s; }
+.controls-section { animation-delay: 0.4s; }
+.mission-section { animation-delay: 0.5s; }
+.resources-section { animation-delay: 0.6s; }
+
+/* Modal animation */
+.modal {
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal.open .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Spinning animation for loading indicators */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(81, 203, 238, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--highlight);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Alert badge pulse */
+.alert-badge {
+    position: relative;
+}
+
+.alert-badge::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--danger);
+    border-radius: 50%;
+    animation: badge-pulse 1.5s infinite;
+}
+
+@keyframes badge-pulse {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.8; }
+}
+
+/* Status indicator animations */
+.mickey-card .status-indicator.active {
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+/* Logo animation */
+.logo-icon {
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-icon::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle,
+        rgba(81, 203, 238, 0.7) 0%,
+        rgba(81, 203, 238, 0) 70%
+    );
+    animation: logo-pulse 3s infinite;
+}
+
+@keyframes logo-pulse {
+    0% { transform: scale(0.8); opacity: 0.3; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(0.8); opacity: 0.3; }
+}
+
+/* Warning animation for critical stats */
+.stats-fill.health-fill[style*="width: 30"] {
+    animation: warning-pulse 1s infinite;
+}
+
+@keyframes warning-pulse {
+    0%, 100% { background-color: var(--warning); }
+    50% { background-color: var(--danger); }
+}
+
+/* Terminal cursor blink */
+.terminal-input::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 16px;
+    background-color: var(--highlight);
+    animation: cursor-blink 1s infinite;
+}
+
+@keyframes cursor-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Snow animation adjustments for better performance */
+.snowflake {
+    will-change: transform;
+}
+
+/* Map grid line animation */
+.map-grid {
+    background-image: 
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: calc(100% / 8) calc(100% / 8);
+    position: relative;
+    overflow: hidden;
+}
+
+.map-grid::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(
+        circle at center,
+        rgba(81, 203, 238, 0.1) 0%,
+        transparent 70%
+    );
+    animation: grid-scan 10s linear infinite;
+}
+
+@keyframes grid-scan {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
