@@ -1,0 +1,28 @@
+services:
+  portfolio-website:
+    image: nginx:alpine
+    container_name: salako-ayoola-xyz
+    volumes:
+      - ./web/dist:/usr/share/nginx/html:ro
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/London
+      - PGID=1001
+      - PUID=1001
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.salako-ayoola-xyz.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.salako-ayoola-xyz.tls=true"
+      - "traefik.http.routers.salako-ayoola-xyz.entrypoints=websecure"
+      - "traefik.http.routers.salako-ayoola-xyz.tls.certresolver=cloudflare"
+      # - "traefik.http.services.salako-ayoola-xyz.loadbalancer.server.port=80"
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    external: true

@@ -54,6 +54,7 @@ wedding-share/data-volume-uploads/*
 ## Networking & Infrastructure
 heimdall/
 traefik/data/*
+traefik/config/*
 traefik/data/acme.json
 tailscale-apps/config/*
 mickey7-nginx/config/ssl/*

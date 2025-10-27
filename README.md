@@ -52,3 +52,45 @@ On VS Code, you may need these additional steps
 ```bash
 sudo docker pull cloudflare/cloudflared:latest
 ```
+### 5. Traefik
+Christian Lempa's guide: https://youtu.be/-hfejNXqOzA?si=46xTN3w6upY9FIrR
+
+Generate Dashboard Credentials
+Replace 'admin' with your username
+```bash
+echo $(htpasswd -nB $USER) | sed -e s/\\$/\\$\\$/g
+```
+
+### 6. RClone
+Insalling Bare Metal
+##### 1. Install RClone
+```bash
+curl https://rclone.org/install.sh | sudo bash
+```
+##### 2. Create RClone config
+```bash
+rclone config
+```
+##### 3. Follow the Prompts to create
+I had permission issues accessing the config, when I used Docker. Nevertheless, this is how to access the terminal.
+Or, you can consider 
+```bash
+docker exec -it rclone /bin/sh
+```
+
+### 7. Portfolio Website
+
+#### Install Node JS and dependencies
+Pull the website's repo into a folder, say 'web' locally
+Install NPM first
+```bash
+sudo apt install npm
+```
+cd to the 'web' folder to install dependencies, this will generate *node_modules*.
+```bash
+npm install
+```
+
+In my case, I use RClone to sync the portfolio media between my local and cloud storage repositories
+#### RClone
+

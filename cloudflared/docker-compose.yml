@@ -1,7 +1,7 @@
 services:
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: cloudflared-htz001
+    container_name: cloudflared-ovh001
     restart: unless-stopped
     volumes:
       - ./config:/root/.cloudflared

@@ -1,44 +1,31 @@
 services:
   traefik:
-    image: traefik:latest
-    container_name: traefik_htz001
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    env_file:
-      - .env
-    networks:
-      - frontend
-      - backend
+    image: traefik:v3.5.3
+    container_name: traefik-ovh-001
+    command: --providers.docker --api.dashboard=true --api.insecure=true
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     environment:
-      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
+      - TZ=Europe/London
       - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
-      - CF_DNS_API_EMAIL=${CF_DNS_API_EMAIL}
+      - PUID=1000
+      - PGID=1000
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./data/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./data/acme.json:/acme.json
-      - ./data/config.yml:/etc/traefik/config.yml:ro
-      - ./data/logs:/var/log/traefik
-      - ./data/conf:/etc/traefik/conf
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./data/certs:/var/traefik/certs:rw
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.${DOMAIN1}`)"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
-      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
-      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.${DOMAIN1}`)"
-      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-dash-https.rule=Host(`traefik.${DOMAIN1}`)"
+      - "traefik.http.routers.traefik-dash-https.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dash-https.service=dashboard@internal"
+      - "traefik.http.routers.traefik-dash-https.middlewares=auth-traefik-dashboard"
+      - "traefik.http.routers.traefik-dash-https.tls=true"
+      - "traefik.http.routers.traefik-dash-https.certresolver=cloudflare"
+      - "traefik.http.middlewares.auth-traefik-dashboard.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
+      # Domains
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=${DOMAIN1}"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DOMAIN1}"
       - "traefik.http.routers.traefik-secure.tls.domains[1].main=${DOMAIN2}"
@@ -47,10 +34,11 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[2].sans=*.${DOMAIN3}"
       - "traefik.http.routers.traefik-secure.tls.domains[3].main=${DOMAIN4}"
       - "traefik.http.routers.traefik-secure.tls.domains[3].sans=*.${DOMAIN4}"
-      
-      - "traefik.http.routers.traefik-secure.service=api@internal"
-      - "traefik.http.services.traefik-service.loadbalancer.server.port=8080"
 
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
 networks:
   frontend:
     external: true

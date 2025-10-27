@@ -1,0 +1,18 @@
+services:
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    entrypoint: /bin/sh  # So we get a shell for setup
+    stdin_open: true     # Keep stdin open for interactive session
+    tty: true            # Allocate a pseudo-TTY
+    volumes:
+      - ./config:/config/rclone  # Persist config inside this folder
+      - ./data:/data                    # Mount local data directory
+    networks:
+      - backend
+    environment:
+      - PUID=1001
+      - PGID=1001
+networks:
+  backend:
+    external: true
