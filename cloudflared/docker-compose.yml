@@ -8,6 +8,8 @@ services:
     command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     environment:
       - TZ=Europe/London
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - frontend
       - backend

@@ -23,21 +23,11 @@ services:
       - traefik.http.routers.mickey21-http.entrypoints=web
       # HTTPS Router
       - traefik.http.routers.mickey21-https.tls=true
-      - traefik.http.routers.mickey21-https.certresolver=cloudflare
+      - traefik.http.routers.mickey21-https.tls.certresolver=cloudflare
       - traefik.http.routers.mickey21-https.entrypoints=websecure
       - traefik.http.routers.mickey21-https.rule=Host(`mickey21.${DOMAIN}`)
 
-      # - traefik.http.middlewares.nginx-https-redirect.redirectscheme.scheme=https
-      # - traefik.http.routers.nginx.middlewares=nginx-https-redirect
-      # # HTTPS Router
-      #- traefik.http.routers.nginx-secure.entrypoints=https
-      # - traefik.http.routers.nginx-secure.rule=Host(`mickey21.${DOMAIN}`) #Expose both outside and the internal domains for Traefik
-      # - traefik.http.routers.nginx-secure.tls=true
-      # - traefik.http.routers.nginx-secure.tls.certresolver=cloudflare
-      # # Service configuration
-      # #- traefik.http.routers.nginx-secure.middlewares=authentik@file
-      # - traefik.http.services.nginx-service.loadbalancer.server.port=80
-      # - traefik.http.routers.nginx-secure.service=nginx-service
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   frontend:

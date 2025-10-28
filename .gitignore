@@ -14,7 +14,6 @@ Thumbs.db
 
 # Database
 postgres/data/*
-postgresql/data/*
 postgresql/config/*
 
 # Docker application configs
@@ -53,12 +52,10 @@ wedding-share/data-volume-uploads/*
 
 ## Networking & Infrastructure
 heimdall/
-traefik/data/*
-traefik/config/*
-traefik/data/acme.json
+traefik/certs/*
+traefik/dynamic/*
+traefik/traefik.yml
 tailscale-apps/config/*
-mickey7-nginx/config/ssl/*
-mickey7-nginx/config/templates/*
 tailscale/config/*
 beszel-htz001/config/*
 beszel/config/*
@@ -84,8 +81,6 @@ frappe-learning/config/*
 opencloud/config/*
 opencloud/data/*
 rclone/config/*
-/rclone/rclone-v1.71.1-linux-arm64
-rclone/rclone-v1.71.1-linux-arm64.zip
 
 ## Websites & Applications
 ea-in-bloom/web/images/*
@@ -94,6 +89,8 @@ salakoayoola-xyz/docker/*
 salakoayoola-xyz/.dockerignore
 salakoayoola-xyz/.env
 salakoayoola-xyz/web/*
+mickey21/config/*
+mickey21/templates/*
 
 ## Others
 backrest-apps/backrest/*

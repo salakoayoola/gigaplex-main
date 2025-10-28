@@ -1,0 +1,72 @@
+services:
+  karakeep:
+    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
+    container_name: karakeep
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      DATA_DIR: /data
+      TZ: Europe/London
+      #OpenRouter
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+      #User Permissions
+      PGID: 1000
+      PUID: 1000
+    volumes:
+      - ./config/karakeep/data:/data
+    # ports:
+    #   - 3000:3000
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      
+      - "traefik.http.routers.karakeep.rule=Host(`read.${DOMAIN}`)"
+      - "traefik.http.routers.karakeep.entrypoints=websecure"
+      - "traefik.http.routers.karakeep.tls=true"
+      - "traefik.http.routers.karakeep.tls.certresolver=cloudflare"
+      
+      - "traefik.http.services.karakeep.loadbalancer.server.port=3000"
+
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: karakeep-meilisearch
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - ./config/meilisearch/meili_data:/meili_data
+    networks:
+      - backend
+
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:124
+    container_name: karakeep-chrome
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

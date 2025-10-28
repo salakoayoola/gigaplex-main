@@ -20,6 +20,8 @@ services:
       - "traefik.http.routers.salako-ayoola-xyz.entrypoints=websecure"
       - "traefik.http.routers.salako-ayoola-xyz.tls.certresolver=cloudflare"
       # - "traefik.http.services.salako-ayoola-xyz.loadbalancer.server.port=80"
+
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - frontend
 

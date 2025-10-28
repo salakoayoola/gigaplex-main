@@ -1,0 +1,84 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    container_name: postgres_db_default
+    environment:
+      - POSTGRES_USER=${USERNAME}
+      - POSTGRES_PASSWORD=${PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - backend
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: postgres_pgadmin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+      - ALLOW_SPECIAL_EMAIL_DOMAINS=True
+      - TZ=Europe/London
+    # ports:
+    #   - 8080:80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.${DOMAIN}`)"
+      - "traefik.http.routers.pgadmin.tls=true"
+      - "traefik.http.routers.pgadmin.entrypoints=websecure"
+      - "traefik.http.routers.pgadmin.tls.certresolver=cloudflare"
+      - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+    networks:
+      - frontend
+      - backend
+
+# Local backup service
+  db-local-backup:
+    image: postgres:16-alpine
+    container_name: postgres_local_backup
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - PGPASSWORD=${PASSWORD}
+      - PGUSER=${USERNAME}
+      - PGHOST=db
+      - TZ=Europe/London
+    volumes:
+      - ${BACKUP_LOCATION}/postgres-databases:/backups:rw
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/logs:/var/log:rw
+    command: >
+      /bin/sh -c "
+        set -e;
+        apk add --no-cache bash coreutils tzdata dcron;
+        echo '#!/bin/sh' > /backup-script.sh;
+        echo 'DATE=$$(date +%Y%m%d)' >> /backup-script.sh;
+        echo 'BACKUP_DIR=\"/backups/$$DATE\"' >> /backup-script.sh;
+        echo 'mkdir -p \"$$BACKUP_DIR\"' >> /backup-script.sh;
+        echo 'echo \"[INFO] Starting backup at $$(date)...\"' >> /backup-script.sh;
+        echo 'DBS=$$(psql -U \"$$PGUSER\" -h \"$$PGHOST\" -t -c \"SELECT datname FROM pg_database WHERE datistemplate = false;\")' >> /backup-script.sh;
+        echo 'for DB in $$DBS; do' >> /backup-script.sh;
+        echo '  FILE=\"$$BACKUP_DIR/$$DB.dump\"' >> /backup-script.sh;
+        echo '  echo \"[INFO] Backing up database: $$DB → $$FILE\"' >> /backup-script.sh;
+        echo '  pg_dump -U \"$$PGUSER\" -h \"$$PGHOST\" -F c -f \"$$FILE\" \"$$DB\"' >> /backup-script.sh;
+        echo 'done' >> /backup-script.sh;
+        echo 'find /backups -maxdepth 1 -type d -mtime +7 -exec rm -rf {} +' >> /backup-script.sh;
+        echo 'echo \"[INFO] Backup complete at $$(date)\"' >> /backup-script.sh;
+        chmod +x /backup-script.sh;
+        echo '0 3 * * * /bin/sh /backup-script.sh >> /var/log/backup.log 2>&1' > /etc/crontabs/root;
+        echo '[INFO] Cron job scheduled for 03:00 daily';
+        crond -f -d 8;
+      "
+    networks:
+      - backend
+
+
+networks:
+  backend:
+    external: true
+  frontend:
+    external: true

@@ -89,8 +89,15 @@ sudo apt install npm
 cd to the 'web' folder to install dependencies, this will generate *node_modules*.
 ```bash
 npm install
+npm run build
+```
+You may need to include more commands, npm fund or more, but once you're done, spin up your docker container and clean up your node js directory
+```bash
+npm prune --production
 ```
 
-In my case, I use RClone to sync the portfolio media between my local and cloud storage repositories
-#### RClone
+### 8. Postgres
+Note for when adding the server in pgAdmin, remember to set the "connection" name to what you named your docker compose service. In most cases it is "db" in case you get connection errors.
 
+### 9. Karakeep
+Remember to set up a Restic backup for Karakeep

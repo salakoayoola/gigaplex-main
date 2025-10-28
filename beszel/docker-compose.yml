@@ -4,6 +4,8 @@ services:
     container_name: "ovh001-beszel-agent"
     restart: always
     network_mode: host
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config:/var/lib/beszel-agent

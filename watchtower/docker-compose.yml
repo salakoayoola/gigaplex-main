@@ -1,0 +1,23 @@
+#Watchtower - update Docker Containers automatically
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower-ovh001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_SCHEDULE: "0 4 * * *"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      TZ: Europe/London
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
