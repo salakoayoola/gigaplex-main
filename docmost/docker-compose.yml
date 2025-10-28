@@ -1,0 +1,61 @@
+services:
+  docmost:
+    image: docmost/docmost:latest
+    depends_on:
+      - redis
+    container_name: docmost
+    environment:
+      APP_URL: https://docs.${DOMAIN}
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      HOST: "0.0.0.0"
+      JWT_TOKEN_EXPIRES_IN: ${JWT_TOKEN_EXPIRES_IN}
+      MAIL_DRIVER: ${MAIL_DRIVER}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_SECURE: ${SMTP_SECURE}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      TZ: ${TZ}
+      PGID: ${PGID}
+      PUID: ${PUID}
+      PORT: ${PORT}
+    # ports:
+    #   - "9093:9093"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.docmost.service=docmost"
+      - "traefik.http.routers.docmost.rule=Host(`docs.${DOMAIN}`)"
+      - "traefik.http.routers.docmost.entrypoints=websecure"
+      - "traefik.http.services.docmost.loadbalancer.server.port=9093"
+      - "traefik.http.routers.docmost.tls=true"
+      - "traefik.http.routers.docmost.tls.certresolver=cloudflare"
+      - "traefik.http.services.docmost.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.docmost.middlewares=compresstraefik"
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+
+    restart: unless-stopped
+    volumes:
+      - ./config:/app/data/storage
+    networks:
+      - frontend
+      - backend
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-docmost
+    restart: unless-stopped
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

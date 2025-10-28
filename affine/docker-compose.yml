@@ -14,8 +14,8 @@ services:
         condition: service_completed_successfully
     volumes:
       # custom configurations
-      - ./data:/root/.affine/storage
-      - ./config:/root/.affine/config
+      - ${UPLOAD_LOCATION}:/root/.affine/storage
+      - ${CONFIG_LOCATION}:/root/.affine/config
     env_file:
       - .env
     environment:
@@ -38,16 +38,15 @@ services:
       - S3_ENDPOINT=${S3_ENDPOINT}
       - S3_BUCKET=${S3_BUCKET}
       - S3_FORCE_PATH_STYLE=${S3_FORCE_PATH_STYLE}
-      - R2_PUBLIC_URL=${R2_PUBLIC_URL} # Optional, may be used by AFFiNE
 
     labels:
     - "traefik.enable=true"
     - "traefik.docker.network=frontend"
 
     # HTTP Router → redirect to HTTPS
-    - "traefik.http.routers.affine.entrypoints=web"
-    - "traefik.http.routers.affine.rule=Host(`notes.${DOMAIN}`)"
-    - "traefik.http.routers.affine.middlewares=affine-https-redirect"
+    # - "traefik.http.routers.affine.entrypoints=web"
+    # - "traefik.http.routers.affine.rule=Host(`notes.${DOMAIN}`)"
+    # - "traefik.http.routers.affine.middlewares=affine-https-redirect"
 
     # Redirect middleware definition
     - "traefik.http.middlewares.affine-https-redirect.redirectscheme.scheme=https"
