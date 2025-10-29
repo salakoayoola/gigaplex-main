@@ -1,0 +1,38 @@
+services:
+  odoo-web:
+    image: odoo:latest
+    container_name: odoo-web
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.odoo-web.rule=Host(`admin.${DOMAIN}`)"
+      - "traefik.http.routers.odoo-web.entrypoints=websecure"
+      - "traefik.http.services.odoo-web.loadbalancer.server.port=8069"
+      - "traefik.http.routers.odoo-web.tls=true"
+      - "traefik.http.routers.odoo-web.tls.certresolver=cloudflare"
+      - "traefik.http.services.odoo-web.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.odoo-web.middlewares=compress-odoo-web"
+      - "traefik.http.middlewares.compress-odoo-web.compress=true"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+    volumes:
+      - odoo-web-data-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+    environment:
+      - TZ=Europe/London
+    networks:
+      - frontend
+      - backend
+volumes:
+  odoo-web-data-data:
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
