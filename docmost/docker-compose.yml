@@ -37,6 +37,7 @@ services:
       - "traefik.http.services.docmost.loadbalancer.passhostheader=true"
       - "traefik.http.routers.docmost.middlewares=compresstraefik"
       - "traefik.http.middlewares.compresstraefik.compress=true"
+      - "com.centurylinklabs.watchtower.enable=true"
 
     restart: unless-stopped
     volumes:
