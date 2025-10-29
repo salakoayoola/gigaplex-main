@@ -1,0 +1,54 @@
+name: invio
+services:
+  backend:
+    image: ghcr.io/kittendevv/invio-backend:latest
+    container_name: invio-backend
+    env_file:
+      - .env
+    environment:
+      ADMIN_USER: ${ADMIN_USER}
+      ADMIN_PASS: ${ADMIN_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_PATH: ${DATABASE_PATH}
+      TZ: Europe/London
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "${BACKEND_PORT}:3000"
+    restart: unless-stopped
+    networks:
+      - backend
+  frontend:
+    image: ghcr.io/kittendevv/invio-frontend:latest
+    env_file:
+      - .env
+    environment:
+      PORT: ${FRONTEND_PORT_INTERNAL}
+      BACKEND_URL: ${BACKEND_URL}
+      TZ: Europe/London
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT_INTERNAL}"
+    restart: unless-stopped
+    container_name: invio-frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.invio.rule=Host(`accountant.${DOMAIN}`)"
+      - "traefik.http.routers.invio.entrypoints=websecure"
+      - "traefik.http.services.invio.loadbalancer.server.port=${FRONTEND_PORT_INTERNAL}"
+      - "traefik.http.routers.invio.tls=true"
+      - "traefik.http.routers.invio.tls.certresolver=cloudflare"
+      - "traefik.http.services.invio.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.invio.middlewares=compresstraefik"
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - frontend
+      - backend
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
