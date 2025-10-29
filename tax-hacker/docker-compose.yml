@@ -1,0 +1,42 @@
+services:
+  tax-hacker-app:
+    image: ghcr.io/vas3k/taxhacker:latest
+    container_name: tax-hacker-app
+    ports:
+      - "7331:7331"
+    environment:
+      - NODE_ENV=production
+      - BASE_URL=https://funds.${DOMAIN}
+      - SELF_HOSTED_MODE=true
+      - UPLOAD_PATH=/app/data/uploads
+      - DATABASE_URL=${DATABASE_URL}
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.tax-hacker-app.rule=Host(`funds.${DOMAIN}`)"
+      - "traefik.http.routers.tax-hacker-app.entrypoints=websecure"
+      - "traefik.http.services.tax-hacker-app.loadbalancer.server.port=7331"
+      - "traefik.http.routers.tax-hacker-app.tls=true"
+      - "traefik.http.routers.tax-hacker-app.tls.certresolver=cloudflare"
+      - "traefik.http.services.tax-hacker-app.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.tax-hacker-app.middlewares=compresstraefik"
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped
+    logging:
+      driver: "local"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    networks:
+      - frontend
+      - backend
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
