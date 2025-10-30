@@ -91,6 +91,12 @@ salakoayoola-xyz/.env
 salakoayoola-xyz/web/*
 mickey21/config/*
 mickey21/templates/*
+odoo/config/*
+invio/data/*
+tax-hacker/data/*
+rotki/data/*
+rotki/logs/*
+postgresus/postgresus-data/*
 
 ## Others
 backrest-apps/backrest/*

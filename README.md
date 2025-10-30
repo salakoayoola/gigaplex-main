@@ -99,5 +99,25 @@ npm prune --production
 ### 8. Postgres
 Note for when adding the server in pgAdmin, remember to set the "connection" name to what you named your docker compose service. In most cases it is "db" in case you get connection errors.
 
+#### Good to Know
+##### 1. Backup from an existing database
+```bash
+docker exec -e PGPASSWORD=$PASSWORD postgres_db_default \
+  pg_dump -U $USERNAME -F c -f /tmp/name_of_backup.backup name_of_db
+```
+Copy it to the host machine
+```bash
+docker cp postgres_db_default:/tmp/name_of_backup.backup ./name_of_backup.backup
+```
+Clean up the container
+```bash
+docker exec postgres_db_default rm /tmp/name_of_backup.backup
+```
+##### 2. Restore backup to a database
+```bash
+pg_restore -U user -d database_name --clean /tmp/name_of_backup.backup
+```
+
+
 ### 9. Karakeep
 Remember to set up a Restic backup for Karakeep
