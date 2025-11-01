@@ -1,0 +1,38 @@
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    # ports:
+    #   - "3030:8080"
+    volumes:
+      - ./config/open-webui_data:/app/backend/data
+    restart: always
+    networks:
+      - frontend
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      # HTTPS Router
+      - "traefik.http.routers.openwebui-secure.entrypoints=websecure"
+      - "traefik.http.routers.openwebui-secure.rule=Host(`jarvis.${DOMAIN}`)"
+      - "traefik.http.routers.openwebui-secure.tls=true"
+      - "traefik.http.routers.openwebui-secure.tls.certresolver=cloudflare"
+      # Service configurations
+      - "traefik.http.routers.openwebui-secure.service=openwebui-service"
+      - "traefik.http.services.openwebui-service.loadbalancer.server.port=8080"
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - WEBUI_URL=${WEBUI_URL}
+      - DEFAULT_LOCALE=en
+      - TZ=${GENERIC_TIMEZONE}
+      - PUID=1000
+      - PGID=1000
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      - WEBUI_NAME=Jarvis by OpenAY😉
+      - ENABLE_SIGNUP=True
+      - ENABLE_ADMIN_CHAT_ACCESS=False
+      - ENABLE_ADMIN_EXPORT=False
+networks:
+  frontend:
+    external: true

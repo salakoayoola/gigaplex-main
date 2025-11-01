@@ -1,0 +1,53 @@
+services:
+  postiz:
+    image: ghcr.io/gitroomhq/postiz-app:latest
+    container_name: postiz
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./postiz-config:/config/
+      - ./postiz-uploads:/uploads/
+    depends_on:
+      postiz-redis:
+        condition: service_healthy
+    environment:
+      PUID: 1001
+      PGID: 1001
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      # HTTPS Router
+      - "traefik.http.routers.postiz-secure.entrypoints=websecure"
+      - "traefik.http.routers.postiz-secure.rule=Host(`social.${DOMAIN}`)"
+      - "traefik.http.routers.postiz-secure.tls=true"
+      - "traefik.http.routers.postiz-secure.tls.certresolver=cloudflare"
+      # Service
+      - "traefik.http.routers.postiz-secure.service=postiz-service"
+      - "traefik.http.services.postiz-service.loadbalancer.server.port=5000"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  postiz-redis:
+    image: redis:7.2
+    container_name: postiz-redis
+    restart: always
+    volumes:
+      - postiz-redis-data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postiz-redis-data:
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

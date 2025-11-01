@@ -64,6 +64,7 @@ services:
     # Optional: gzip compression
     - "traefik.http.middlewares.compresstraefik.compress=true"
     - "traefik.http.routers.affine-secure.middlewares=compresstraefik"
+    - "com.centurylinklabs.watchtower.enable=true"
 
     restart: unless-stopped
     networks:

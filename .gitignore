@@ -97,6 +97,8 @@ tax-hacker/data/*
 rotki/data/*
 rotki/logs/*
 postgresus/postgresus-data/*
+postiz/postiz-config/*
+postiz/postiz-uploads/*
 
 ## Others
 backrest-apps/backrest/*
