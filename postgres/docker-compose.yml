@@ -22,8 +22,8 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
       - ALLOW_SPECIAL_EMAIL_DOMAINS=True
       - TZ=Europe/London
-    # ports:
-    #   - 8080:80
+    ports:
+      - 8080:80
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.${DOMAIN}`)"

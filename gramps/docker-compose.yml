@@ -1,0 +1,74 @@
+services:
+  grampsweb: &grampsweb
+    image: ghcr.io/gramps-project/grampsweb:latest
+    container_name: grampsweb-server
+    restart: always
+    # ports:
+    #   - "5000:5000"  # host:docker
+    environment:
+      GRAMPSWEB_TREE: ${GRAMPSWEB_TREE}  # will create a new tree if not exists
+      GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://grampsweb_redis:6379/0"
+      GRAMPSWEB_CELERY_CONFIG__result_backend: "redis://grampsweb_redis:6379/0"
+      GRAMPSWEB_RATELIMIT_STORAGE_URI: redis://grampsweb_redis:6379/1
+    depends_on:
+      - grampsweb_redis
+    networks:
+      - backend
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+        # HTTP Router (redirect to HTTPS)
+      # - "traefik.http.routers.gramps-http.entrypoints=web"
+      # - "traefik.http.routers.gramps-http.rule=Host(`family.${DOMAIN}`)"
+      # - "traefik.http.routers.gramps-http.middlewares=https-redirect@file"
+
+      # HTTPS Router
+      - "traefik.http.routers.gramps-secure.entrypoints=websecure"
+      - "traefik.http.routers.gramps-secure.rule=Host(`family.${DOMAIN}`)"
+      - "traefik.http.routers.gramps-secure.tls=true"
+      - "traefik.http.routers.gramps-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.gramps-secure.service=gramps-service"
+
+      # Service
+      - "traefik.http.services.gramps-service.loadbalancer.server.port=5000"
+
+      # Middlewares (combined)
+      - "traefik.http.routers.gramps-secure.middlewares=compresstraefik,default-security-headers@file"
+      - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - ./config/gramps_users:/app/users  # persist user database
+      - ./config/gramps_index:/app/indexdir  # persist search index
+      - ./config/gramps_thumb_cache:/app/thumbnail_cache  # persist thumbnails
+      - ./config/gramps_cache:/app/cache  # persist export and report caches
+      - ./config/gramps_secret:/app/secret  # persist flask secret
+      - ./config/gramps_db:/root/.gramps/grampsdb  # persist Gramps database
+      - ./config/gramps_media:/app/media  # persist media files
+      - ./config/gramps_tmp:/tmp
+
+  grampsweb_celery:
+    <<: *grampsweb  # YAML merge key copying the entire grampsweb service config
+    ports: []
+    container_name: grampsweb_celery
+    depends_on:
+      - grampsweb
+      - grampsweb_redis
+    command: celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=2
+    # user: "1001:1001"
+    networks:
+      - backend
+
+  grampsweb_redis:
+    image: docker.io/library/redis:7.2.4-alpine
+    container_name: grampsweb_redis
+    # sysctls:
+    #   - vm.overcommit_memory=1
+    restart: always
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

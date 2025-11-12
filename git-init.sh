@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-# Git Initialization Script for Hetzner Servers
+# Git Initialization Script for VPS
 # Purpose: Initialize and configure Git with SSH authentication
 # Features: SSH key management, GitHub connection testing, interactive setup
 # Usage: bash git-init.sh

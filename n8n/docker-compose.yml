@@ -1,0 +1,88 @@
+services:  
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    # user: root
+    networks:
+      - frontend
+      - backend
+    container_name: n8n
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      # HTTPS Router
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.rule=Host(`nodes.${DOMAIN}`)"
+      - "traefik.http.routers.n8n.tls=true"
+      - "traefik.http.routers.n8n.tls.certresolver=cloudflare"
+      - "traefik.http.routers.n8n.service=n8n"
+
+      # Backend Service
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+
+      - "traefik.http.routers.n8n.middlewares=compresstraefik"
+      # - "traefik.http.routers.n8n.compresstraefik.compress=true"
+      # - "traefik.http.services.n8n.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.n8n.middlewares=default-security-headers@file"
+
+      # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
+
+    environment:
+      # General n8n configurations
+      - N8N_HOST=n8n.${DOMAIN}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://nodes.${DOMAIN}
+
+      # Security configurations
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - N8N_TRUST_PROXY=true
+      - N8N_PROXY_HOPS=1
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+
+      # Timezone configurations
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - TZ=${GENERIC_TIMEZONE}
+
+      # System configurations
+      - NODE_ENV=production
+      # - PGID=1001
+      # - PUID=1001
+
+      # Execution configurations
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=90   # keep 90 days
+
+      # Feature configurations
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true
+      - N8N_HIDE_UI_NAGS=true
+
+      # Postgres configurations
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+
+    volumes:
+      - ./n8n-data:/home/node/.n8n
+      # - ./data:/files
+
+networks:
+    frontend:
+      external: true
+    backend:
+      external: true
+
+# volumes:
+#   n8n_data:

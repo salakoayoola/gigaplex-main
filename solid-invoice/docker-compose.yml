@@ -1,0 +1,57 @@
+services:
+  # invoice-db:
+  #   image: "mysql:8.0"
+  #   volumes:
+  #     - ./config/db_data:/var/lib/mysql
+  #   restart: always
+  #   container_name: invoice-db
+  #   networks:
+  #     - backend
+  #   environment:
+  #     MYSQL_DATABASE: solidinvoice
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #   command: 
+  #     - --authentication-policy=mysql_native_password
+  #     - --character-set-server=utf8mb4
+  #     - --collation-server=utf8mb4_unicode_ci
+  #     # Fixed the host cache syntax
+  #     - --host-cache-size=0
+
+  solid-invoice:
+    image: "solidinvoice/solidinvoice:latest"
+    container_name: solid-invoice
+    # depends_on:
+    #   - invoice-db
+    networks:
+      - backend
+      - frontend
+    restart: always
+    # environment:
+    #   DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@invoice-db:3306/solidinvoice
+      # Or use individual parameters:
+      # DB_HOST: invoice-db
+      # DB_PORT: 3306
+      # DB_NAME: solidinvoice
+      # DB_USER: ${MYSQL_USER}
+      # DB_PASSWORD: ${MYSQL_PASSWORD}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=frontend
+      - traefik.http.routers.solid-invoice.service=solid-invoice
+      - traefik.http.routers.solid-invoice.entrypoints=websecure
+      - traefik.http.routers.solid-invoice.rule=Host(`payments.${DOMAIN}`)
+      - traefik.http.routers.solid-invoice.tls=true
+      - traefik.http.routers.solid-invoice.tls.certresolver=cloudflare
+      - traefik.http.services.solid-invoice.loadbalancer.server.port=8765
+      - traefik.http.routers.solid-invoice.middlewares=compresstraefik,default-security-headers@file
+      - com.centurylinklabs.watchtower.enable=true
+    volumes:
+      - ./config/app_data:/etc/solidinvoice
+
+networks:
+  backend:
+    external: true
+  frontend:
+    external: true

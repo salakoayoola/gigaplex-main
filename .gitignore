@@ -99,7 +99,11 @@ rotki/logs/*
 postgresus/postgresus-data/*
 postiz/postiz-config/*
 postiz/postiz-uploads/*
+n8n/n8n-data/*
+gramps/config/*
+solid-invoice/config/*
 
 ## Others
 backrest-apps/backrest/*
 palmr/config/*
+salakoayoola-xyz/web/*

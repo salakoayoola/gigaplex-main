@@ -20,8 +20,8 @@ services:
     restart: unless-stopped
     command: server
     container_name: authentik_server
-    # ports:
-    #   - "9000:9000"
+    ports:
+      - "9000:9000"
     environment:
       - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
       - AUTHENTIK_REDIS__HOST=redis
