@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:v3.5.3
+    image: traefik:latest
     container_name: traefik
     command:
       - --providers.docker
@@ -29,7 +29,9 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.middlewares.auth.basicAuth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
+      - "traefik.http.routers.traefik.middlewares=auth-traefik-dashboard"
+      - "traefik.http.middlewares.auth-traefik-dashboard.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
+
     networks:
       - frontend
       - backend
