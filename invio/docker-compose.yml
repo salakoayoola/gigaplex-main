@@ -28,21 +28,28 @@ services:
       TZ: Europe/London
     depends_on:
       - backend
-    ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT_INTERNAL}"
+    # ports:
+    #   - "${FRONTEND_PORT}:${FRONTEND_PORT_INTERNAL}"
     restart: unless-stopped
     container_name: invio-frontend
     labels:
       - "traefik.enable=true"
+      # HTTPS Router
       - "traefik.docker.network=frontend"
-      - "traefik.http.routers.invio.rule=Host(`accountant.${DOMAIN}`)"
       - "traefik.http.routers.invio.entrypoints=websecure"
-      - "traefik.http.services.invio.loadbalancer.server.port=${FRONTEND_PORT_INTERNAL}"
+      - "traefik.http.routers.invio.rule=Host(`accountant.${DOMAIN}`)"
       - "traefik.http.routers.invio.tls=true"
       - "traefik.http.routers.invio.tls.certresolver=cloudflare"
-      - "traefik.http.services.invio.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.invio.service=invio"
+
+      # Backend Service
+      - "traefik.http.services.invio.loadbalancer.server.port=${FRONTEND_PORT_INTERNAL}"
       - "traefik.http.routers.invio.middlewares=compresstraefik"
+      - "traefik.http.routers.invio.middlewares=default-security-headers@file"
+
+      - "traefik.http.services.invio.loadbalancer.passhostheader=true"
       - "traefik.http.middlewares.compresstraefik.compress=true"
+      # Watctower
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - frontend
