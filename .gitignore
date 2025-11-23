@@ -107,3 +107,10 @@ solid-invoice/config/*
 backrest-apps/backrest/*
 palmr/config/*
 salakoayoola-xyz/web/*
+
+paperless-ngx-personal/media/*
+paperless-ngx-personal/data/*
+paperless-ngx-personal/consume/*
+papaerless-ngx-personal/export/*
+
+teleprompter/web/*
