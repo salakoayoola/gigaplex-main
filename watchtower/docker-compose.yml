@@ -1,7 +1,7 @@
 #Watchtower - update Docker Containers automatically
 services:
   watchtower:
-    image: containrrr/watchtower:latest
+    image: nickfedor/watchtower
     container_name: watchtower-ovh001
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
