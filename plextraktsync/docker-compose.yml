@@ -1,6 +1,6 @@
 services:
     plextraktsync:
-        image: ghcr.io/taxel/plextraktsync:main
+        image: ghcr.io/taxel/plextraktsync:latest
         command: sync
         container_name: plextraktsync
         restart: on-failure:2
@@ -13,8 +13,11 @@ services:
         #PlexTraktSync Watch
         networks:
             - plex-apps
+        labels:
+            # Watchtower
+            - "com.centurylinklabs.watchtower.enable=true"
     plextraktsyncwatch:
-        image: ghcr.io/taxel/plextraktsync:main
+        image: ghcr.io/taxel/plextraktsync:latest
         container_name: plextraktsyncwatch
         volumes:
             - ./config:/app/config
@@ -26,6 +29,9 @@ services:
         restart: always
         networks:
             - plex-apps
+        labels:
+            # Watchtower
+            - "com.centurylinklabs.watchtower.enable=true"
 #Schedule PlexTraktSync to run daily
     scheduler:
         image: mcuadros/ofelia:latest
@@ -37,10 +43,16 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         restart: always
         labels:
-            ofelia.job-run.plextraktsync.schedule: "@every 24h"
+            ofelia.job-run.plextraktsync.schedule: "0 2 * * *"
             ofelia.job-run.plextraktsync.container: "plextraktsync"
+            com.centurylinklabs.watchtower.enable: "true"
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
         networks:
             - plex-apps
+            
 
 networks:
   plex-apps:

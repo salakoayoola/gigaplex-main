@@ -18,13 +18,9 @@ services:
     networks:
       servarrnetwork:
         ipv4_address: 172.69.0.10
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.sonarr-secure.entrypoints=https"
-    #   - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.media.${DOMAIN}`)||Host(`sonarr.${DOMAIN}`)"
-    #   - "traefik.http.routers.sonarr-secure.tls=true"
-    #   - "traefik.http.routers.sonarr-secure.tls.certresolver=cloudflare"
-    #   - "traefik.http.services.sonarr-service.loadbalancer.server.port=8989"
+    labels:
+  # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
 networks:
   servarrnetwork:
     external: true

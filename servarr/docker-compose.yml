@@ -16,7 +16,7 @@ services:
       - /dev/net/tun:/dev/net/tun # If running on an LXC see readme for more info.
     networks:
       servarrnetwork:
-        ipv4_address: 172.69.0.2
+        ipv4_address: 172.69.0.8
     ports:
       - ${FIREWALL_VPN_INPUT_PORTS}:${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
       - 8081:8081 # qbittorrent web interface
@@ -31,6 +31,9 @@ services:
       timeout: 10s
       retries: 5
     restart: unless-stopped
+    labels:
+            # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -55,6 +58,9 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./prowlarr:/config
     restart: unless-stopped
+    labels:
+            # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       gluetun:
         condition: service_healthy
@@ -67,6 +73,7 @@ services:
     restart: unless-stopped
     labels:
       - deunhealth.restart.on.unhealthy=true
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - PUID=1000
       - PGID=1000
@@ -97,5 +104,8 @@ services:
       - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
       - TZ=${TZ}
     restart: always
+    labels:
+            # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

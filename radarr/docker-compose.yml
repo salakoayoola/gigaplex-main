@@ -18,13 +18,10 @@ services:
     networks:
       servarrnetwork:
         ipv4_address: 172.69.0.20
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.radarr-secure.entrypoints=https"
-    #   - "traefik.http.routers.radarr-secure.rule=Host(`radarr.media.${DOMAIN}`)||Host(`radarr.${DOMAIN}`)"
-    #   - "traefik.http.routers.radarr-secure.tls=true"
-    #   - "traefik.http.routers.radarr-secure.tls.certresolver=cloudflare"
-    #   - "traefik.http.services.radarr-service.loadbalancer.server.port=7878"
+    labels:
+            # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
+
 networks:
   servarrnetwork:
     external: true

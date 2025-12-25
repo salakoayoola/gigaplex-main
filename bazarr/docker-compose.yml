@@ -16,6 +16,9 @@ services:
     networks:
       servarrnetwork: 
         ipv4_address: 172.69.0.50
+    labels:
+      # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
 # labels:
     restart: unless-stopped
 networks:

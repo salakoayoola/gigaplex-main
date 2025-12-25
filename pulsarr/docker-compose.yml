@@ -12,6 +12,9 @@ services:
       - .env
     networks:
       - servarrnetwork
+    labels:
+            # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
 networks:
   servarrnetwork:
     external: true

@@ -14,6 +14,9 @@ services:
     restart: unless-stopped
     networks:
       - plex-apps
+    labels:
+            # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
 networks:
   plex-apps:
     external: true

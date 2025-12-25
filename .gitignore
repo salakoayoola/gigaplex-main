@@ -39,6 +39,7 @@ gluetun/config/servers.json
 tailscale-media/config/*
 traefik/data/*
 traefik-media/data/*
+tailscale/config/*
 
 #Download Clients
 servarr/qbittorrent/*
@@ -50,3 +51,6 @@ download-stack/config-qbittorrent/*
 download-stack/config-gluetun/*
 
 pulsarr/data/*
+
+audiobookshelf/config/*
+audiobookshelf/metadata/*
