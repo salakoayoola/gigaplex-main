@@ -78,25 +78,8 @@ Or, you can consider
 docker exec -it rclone /bin/sh
 ```
 
-### 7. Portfolio Website
 
-#### Install Node JS and dependencies
-Pull the website's repo into a folder, say 'web' locally
-Install NPM first
-```bash
-sudo apt install npm
-```
-cd to the 'web' folder to install dependencies, this will generate *node_modules*.
-```bash
-npm install
-npm run build
-```
-You may need to include more commands, npm fund or more, but once you're done, spin up your docker container and clean up your node js directory
-```bash
-npm prune --production
-```
-
-### 8. Postgres
+### 7. Postgres
 Note for when adding the server in pgAdmin, remember to set the "connection" name to what you named your docker compose service. In most cases it is "db" in case you get connection errors.
 
 #### Good to Know

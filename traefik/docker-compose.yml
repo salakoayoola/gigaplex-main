@@ -29,7 +29,7 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=auth-traefik-dashboard"
+      # - "traefik.http.routers.traefik.middlewares=auth-traefik-dashboard"
       - "traefik.http.middlewares.auth-traefik-dashboard.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
 
     networks:

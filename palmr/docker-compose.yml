@@ -1,0 +1,39 @@
+services:
+  palmr:
+    image: kyantech/palmr:latest
+    container_name: palmr
+    volumes:
+      - ./config:/app/server
+    restart: unless-stopped
+    networks:
+      - frontend
+    env_file:
+      - .env
+    environment:
+      - ENABLE_S3=false
+      - STORAGE_URL=https://filetransfer.brownmelon.xyz
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - DOWNLOAD_MAX_CONCURRENT=12
+      - DOWNLOAD_MEMORY_THRESHOLD_MB=4096
+      - DOWNLOAD_QUEUE_SIZE=60
+      - DOWNLOAD_MIN_FILE_SIZE_GB=5.0
+      - DOWNLOAD_AUTO_SCALE=false
+      - PUID=1000
+      - PGID=1000
+    labels:
+      - "traefik.enable=true"
+      # HTTPS Router
+      - "traefik.http.routers.palmr-secure.entrypoints=websecure"
+      - "traefik.http.routers.palmr-secure.rule=Host(`filetransfer.${DOMAIN1}`) || Host(`filetransfer.${DOMAIN2}`)"
+      - "traefik.http.routers.palmr-secure.tls=true"
+      - "traefik.http.routers.palmr-secure.tls.certresolver=cloudflare"
+      # Service configuration
+      - "traefik.http.routers.palmr-secure.service=palmr-service"
+      - "traefik.http.services.palmr-service.loadbalancer.server.port=5487"
+      # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
+
+
+networks:
+  frontend:
+    external: true

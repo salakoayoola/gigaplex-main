@@ -1,0 +1,30 @@
+services:
+  wedding-website:
+    image: nginx:alpine
+    container_name: ea-in-bloom
+    volumes:
+      - ./web/dist:/usr/share/nginx/html:ro
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    environment:
+      # - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
+      # - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx/conf.d
+      - TZ=Europe/London
+      - PGID=1001
+      - PUID=1001
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ea-in-bloom.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.ea-in-bloom.entrypoints=websecure"
+      - "traefik.http.routers.ea-in-bloom.tls=true"
+      - "traefik.http.routers.ea-in-bloom.tls.certresolver=cloudflare"
+      - "traefik.http.services.ea-in-bloom.loadbalancer.server.port=80"
+
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - frontend
+networks:
+  frontend:
+    external: true

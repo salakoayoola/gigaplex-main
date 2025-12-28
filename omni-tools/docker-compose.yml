@@ -1,0 +1,27 @@
+services:
+  omni-tools:
+    image: iib0011/omni-tools:latest
+    container_name: omni-tools
+    restart: unless-stopped
+    # ports:
+    #   - "8080:80"
+    networks:
+      - frontend
+    labels:
+      # Core Traefik labels
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+
+      # HTTPS Router
+      - "traefik.http.routers.omni-tools-secure.entrypoints=websecure"
+      - "traefik.http.routers.omni-tools-secure.rule=Host(`omni-tools.${DOMAIN}`)" #Expose both outside and the internal domains for Traefik
+      - "traefik.http.routers.omni-tools-secure.tls=true"
+      - "traefik.http.routers.omni-tools-secure.tls.certresolver=cloudflare"
+      # Service configuration
+      - "traefik.http.services.omni-tools-service.loadbalancer.server.port=80"
+      - "traefik.http.routers.omni-tools-secure.service=omni-tools-service"
+      # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
+networks:
+  frontend:
+    external: true

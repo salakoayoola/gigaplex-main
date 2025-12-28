@@ -114,3 +114,9 @@ paperless-ngx-personal/consume/*
 papaerless-ngx-personal/export/*
 
 teleprompter/web/*
+teleprompter/data/*
+
+ea-in-bloom-wedding/docker/*
+ea-in-bloom-wedding/web/*
+
+ea-in-bloom/portfolio-images/*

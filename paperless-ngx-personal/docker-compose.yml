@@ -1,0 +1,89 @@
+services:
+  broker-personal:
+    image: docker.io/library/redis:8
+    restart: unless-stopped
+    container_name: broker-personal-paperless
+    volumes:
+      - redisdata:/data
+    networks:
+      - backend
+
+  webserver-personal:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    container_name: paperless-personal
+    depends_on:
+      - broker-personal
+      - gotenberg-personal
+      - tika-personal
+    # ports:
+    #   - "8000:8000"
+    volumes:
+      - ./data:/usr/src/paperless/data
+      - ./media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    env_file: .env
+    environment:
+      #DB Settings
+      PAPERLESS_REDIS: ${PAPERLESS_REDIS}
+      PAPERLESS_DBHOST: ${POSTGRES_HOST}
+      PAPERLESS_DBNAME: ${POSTGRES_DB}
+      PAPERLESS_DBUSER: ${POSTGRES_USER}
+      PAPERLESS_DBPASS: ${POSTGRES_PASSWORD}
+      # Tika/Gotenberg Settings
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: ${PAPERLESS_TIKA_GOTENBERG_ENDPOINT}
+      PAPERLESS_TIKA_ENDPOINT: ${PAPERLESS_TIKA_ENDPOINT}
+      # Other Settings
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+      PAPERLESS_TIME_ZONE: ${PAPERLESS_TIME_ZONE}
+    labels:
+      - "traefik.enable=true"
+      # HTTPS Router
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.paperless-personal.entrypoints=websecure"
+      - "traefik.http.routers.paperless-personal.rule=Host(`paperless.${DOMAIN}`)"
+      - "traefik.http.routers.paperless-personal.tls=true"
+      - "traefik.http.routers.paperless-personal.tls.certresolver=cloudflare"
+      - "traefik.http.routers.paperless-personal.service=paperless-personal"
+      # Backend Service
+      - "traefik.http.services.paperless-personal.loadbalancer.server.port=8000"
+      # - "traefik.http.routers.paperless-personal.compresstraefik.compress=true"
+      # - "traefik.http.services.paperless-personal.loadbalancer.passhostheader=true"
+      - "traefik.http.routers.paperless-personal.middlewares=compresstraefik"
+      # Watchtower
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - frontend
+      - backend
+
+  gotenberg-personal:
+    image: docker.io/gotenberg/gotenberg:8.24
+    container_name: gotenberg-personal-paperless
+    restart: unless-stopped
+    # The gotenberg chromium route is used to convert .eml files. We do not
+    # want to allow external content like tracking pixels or even javascript.
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      - backend
+
+  tika-personal:
+    image: docker.io/apache/tika:latest
+    container_name: tika-personal-paperless
+    restart: unless-stopped
+    networks:
+      - backend
+
+
+volumes:
+  redisdata:
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

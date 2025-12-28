@@ -22,17 +22,17 @@ services:
       # Backend Service
       - "traefik.http.services.n8n.loadbalancer.server.port=5678"
 
-      - "traefik.http.routers.n8n.middlewares=compresstraefik"
+      # - "traefik.http.routers.n8n.middlewares=compresstraefik"
       # - "traefik.http.routers.n8n.compresstraefik.compress=true"
       # - "traefik.http.services.n8n.loadbalancer.passhostheader=true"
-      - "traefik.http.routers.n8n.middlewares=default-security-headers@file"
+      # - "traefik.http.routers.n8n.middlewares=default-security-headers@file"
 
       # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
 
     environment:
       # General n8n configurations
-      - N8N_HOST=n8n.${DOMAIN}
+      - N8N_HOST=nodes.${DOMAIN}
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
       - WEBHOOK_URL=https://nodes.${DOMAIN}
@@ -65,6 +65,22 @@ services:
       - N8N_RUNNERS_ENABLED=true
       - N8N_COMMUNITY_PACKAGES_ENABLED=true
       - N8N_HIDE_UI_NAGS=true
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
+      - N8N_EDITOR_BASE_URL=https://nodes.${DOMAIN}
+
+
+      # Git
+      - N8N_SOURCE_CONTROL_ENABLED=true
+      - N8N_SOURCE_CONTROL_GIT_USER_NAME=${GIT_USER_NAME}
+      - N8N_SOURCE_CONTROL_GIT_USER_EMAIL=${GIT_USER_EMAIL}
+      - N8N_SOURCE_CONTROL_REPOSITORY_PATH=/data/git
+      - N8N_SOURCE_CONTROL_DEFAULT_BRANCH=main
+      - N8N_SOURCE_CONTROL_PULL_BEFORE_PUSH=true
+
+
+
+
 
       # Postgres configurations
       - DB_TYPE=postgresdb
@@ -73,9 +89,11 @@ services:
       - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
       - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
       - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      
 
     volumes:
       - ./n8n-data:/home/node/.n8n
+      - ./git:/data/git
       # - ./data:/files
 
 networks:
