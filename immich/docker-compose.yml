@@ -34,6 +34,7 @@ services:
       - "traefik.http.routers.immich-secure.tls=true"
       - "traefik.http.routers.immich-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.immich-secure.service=immich-service"
+      #- "traefik.http.routers.immich-secure.middlewares=immich-https-redirect,upload-limit"
 
       # WebSocket Support
       # - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"

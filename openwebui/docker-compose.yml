@@ -1,2 +1,41 @@
 services:
-  
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    ports:
+      - "3030:8080"
+    volumes:
+      - ./config/open-webui_data:/app/backend/data
+    restart: always
+    networks:
+      - frontend
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      # HTTP Router
+      - "traefik.http.routers.openwebui.entrypoints=http"
+      - "traefik.http.routers.openwebui.rule=Host(`jarvis.${DOMAIN}`) || Host(`jarvis.apps.${DOMAIN}`)"
+      - "traefik.http.middlewares.openwebui-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.openwebui.middlewares=openwebui-https-redirect"
+      # HTTPS Router
+      - "traefik.http.routers.openwebui-secure.entrypoints=https"
+      - "traefik.http.routers.openwebui-secure.rule=Host(`jarvis.${DOMAIN}`) || Host(`jarvis.apps.${DOMAIN}`)"
+      - "traefik.http.routers.openwebui-secure.tls=true"
+      - "traefik.http.routers.openwebui-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.openwebui-secure.service=openwebui-service"
+      - "traefik.http.services.openwebui-service.loadbalancer.server.port=8080"
+    environment:
+      - WEBUI_URL=${WEBUI_URL}
+      - DEFAULT_LOCALE=en
+      - TZ=${GENERIC_TIMEZONE}
+      - PUID=1000
+      - PGID=1000
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      - WEBUI_NAME=Jarvis by OpenAY😉
+      - ENABLE_SIGNUP=True
+      - ENABLE_ADMIN_CHAT_ACCESS=False
+      - ENABLE_ADMIN_EXPORT=False
+networks:
+  frontend:
+    external: true

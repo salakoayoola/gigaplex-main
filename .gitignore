@@ -117,3 +117,5 @@ docmost/redis_data/*
 
 postgresql/data/*
 postgresql/config/*
+
+openwebui/config/*
