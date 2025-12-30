@@ -14,7 +14,7 @@ services:
       - backend
 
   beszel-agent:
-    image: "henrygd/beszel-agent"
+    image: henrygd/beszel-agent
     container_name: "beszel-agent-infrarr"
     restart: unless-stopped
     network_mode: host

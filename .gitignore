@@ -17,7 +17,6 @@ Thumbs.db
 # Extra Folders folder
 firefox/config/*
 tailscale-infrarr/config/*
-bind9/config/*
 homepage/config/*
 pihole/etc-pihole/*
 pihole/etc-dnsmasq.d/*
@@ -33,3 +32,8 @@ kopia/tmp/*
 
 backrest/backrest/*
 beszel/config/*
+
+
+## Traefik specific ignores
+/traefik/traefik.yml
+traefik/certs/*
