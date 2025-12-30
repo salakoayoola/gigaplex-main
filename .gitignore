@@ -54,3 +54,7 @@ pulsarr/data/*
 
 audiobookshelf/config/*
 audiobookshelf/metadata/*
+
+## Traefik specific ignores
+traefik/traefik.yml
+traefik/certs/*
