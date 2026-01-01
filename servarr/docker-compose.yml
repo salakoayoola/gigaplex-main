@@ -1,9 +1,6 @@
-networks:
-  servarrnetwork:
-    name: servarrnetwork 
-    ipam:
-      config:
-        - subnet: 172.69.0.0/24
+# networks:
+#   servarrnetwork:
+#     external: true
 
 services:
 # airvpn recommended (referral url: https://airvpn.org/?referred_by=673908)
@@ -14,19 +11,18 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun # If running on an LXC see readme for more info.
-    networks:
-      servarrnetwork:
-        ipv4_address: 172.69.0.8
+    # networks:
+    #   - servarrnetwork 
     ports:
       - ${FIREWALL_VPN_INPUT_PORTS}:${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
       - 8081:8081 # qbittorrent web interface
       - 6881:6881 # qbittorrent torrent port
       - 9696:9696 # prowlarr
     volumes:
-      - ./gluetun-config:/gluetun
+      - ${CONFIG}/gluetun:/gluetun
     # Make a '.env' file in the same directory.
     healthcheck:
-      test: ping -c 1 www.google.com || exit 1
+      test: wget -q --spider https://ipleak.net || exit 1
       interval: 20s
       timeout: 10s
       retries: 5
@@ -45,7 +41,12 @@ services:
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
       # Tell the firewall to allow the QBittorrent peer port
       - FIREWALL_VPN_INPUT_PORTS=${FIREWALL_VPN_INPUT_PORTS}
-      - FIREWALL_OUTBOUND_SUBNETS=172.69.0.0/24,192.168.1.0/24
+      # - VPN_PORT_FORWARDING=on
+      - DNS_ADDRESS=10.128.0.1
+
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.1.0/24 # adjust to your local network subnet(s)
+      - FIREWALL_VPN_INTERFACE=wg0
+      - LOG_LEVEL=info
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -56,7 +57,7 @@ services:
       - TZ=${TZ}
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./prowlarr:/config
+      - ${CONFIG}/prowlarr:/config
     restart: unless-stopped
     labels:
             # Watchtower
@@ -81,7 +82,7 @@ services:
       - WEBUI_PORT=8081 # must match "qbittorrent web interface" port number in gluetun's service above
       - TORRENTING_PORT=${FIREWALL_VPN_INPUT_PORTS} # airvpn forwarded port, pulled from .env
     volumes:
-      - ./qbittorrent:/config
+      - ${CONFIG}/qbittorrent:/config
       - ${DOWNLOADS}:/downloads #Downloads
     depends_on:
       gluetun:

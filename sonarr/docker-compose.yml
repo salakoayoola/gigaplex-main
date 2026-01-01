@@ -11,16 +11,11 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ./config:/config #Sonarr Config
+      - ${CONFIG}/sonarr:/config #Sonarr Config
       - ${TVSHOWS}:/tv #TV Shows Folder
       - ${DOWNLOADS}:/downloads #Downloads
     restart: unless-stopped
-    networks:
-      servarrnetwork:
-        ipv4_address: 172.69.0.10
+
     labels:
   # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
-networks:
-  servarrnetwork:
-    external: true

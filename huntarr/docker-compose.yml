@@ -6,12 +6,9 @@ services:
     ports:
       - "9705:9705"
     volumes:
-      - ./config:/config
+      - ${CONFIG}/huntarr:/config
     environment:
       - TZ=Europe/London
-    networks:
-      servarrnetwork:
-        ipv4_address: 172.69.0.60
     labels:
       # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"

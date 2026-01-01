@@ -5,14 +5,12 @@ services:
         container_name: plextraktsync
         restart: on-failure:2
         volumes:
-            - ./config:/app/config
+            - ${CONFIG}/plextraktsync:/app/config
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
         #PlexTraktSync Watch
-        networks:
-            - plex-apps
         labels:
             # Watchtower
             - "com.centurylinklabs.watchtower.enable=true"
@@ -20,15 +18,13 @@ services:
         image: ghcr.io/taxel/plextraktsync:latest
         container_name: plextraktsyncwatch
         volumes:
-            - ./config:/app/config
+            - ${CONFIG}/plextraktsync:/app/config
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
         command: watch
         restart: always
-        networks:
-            - plex-apps
         labels:
             # Watchtower
             - "com.centurylinklabs.watchtower.enable=true"
@@ -50,10 +46,3 @@ services:
             - PUID=${PUID}
             - PGID=${PGID}
             - TZ=${TZ}
-        networks:
-            - plex-apps
-            
-
-networks:
-  plex-apps:
-    external: true

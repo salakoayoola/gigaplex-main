@@ -9,13 +9,10 @@ services:
       - TZ=${TZ}
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
-      # # Allow connections from anywhere including Tailscale network
-      #- ALLOWED_NETWORKS=172.16.0.0/12,192.168.0.0/16,10.0.0.0/8,100.64.0.0/10
     volumes:
-      - ./config:/config
+      - ${CONFIG}/plex:/config
       - ${TVSHOWS}:/tv #TV Shows
       - ${MOVIES}:/movies #Movies
-      # - ${MUSIC:-./music}:/music #Music (optional)
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:32400/web/index.html || exit 1"]
       interval: 30s
@@ -25,13 +22,18 @@ services:
     labels:
       # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
-    networks:
-      - plex-apps
-    # Optionally expose the direct port for Tailscale access
-    # Use this if Traefik is causing issues with direct Tailscale access
-    ports:
-      - "32400:32400"
-
-networks:
-  plex-apps:
-    external: true
+    network_mode: "host"
+    # networks:
+    #   - plex-apps
+    # ports:
+    #   - "32400:32400"
+    #   - "1900:1900/udp"  # For DLNA
+    #   - "3005:3005"      # For Plex Companion
+    #   - "5353:5353/udp"  # For Bonjour/Avahi discovery
+    #   - "8324:8324"      # For Roku via Plex Companion
+    #   - "32410:32410/udp" # For GDM network discovery
+    #   - "32412-32414:32412-32414/udp" # For GDM network discovery
+    #   - "32469:32469"    # For DLNA media transfer
+# networks:
+#   plex-apps:
+#     external: true

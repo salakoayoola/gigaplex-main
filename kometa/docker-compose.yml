@@ -8,11 +8,10 @@ services:
     volumes:
       - ./config:/config
     restart: unless-stopped
-    networks:
-      - plex-apps
     labels:
       # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
+      
   imagemaid:
     image: kometateam/imagemaid
     container_name: imagemaid
@@ -32,14 +31,8 @@ services:
       - ./config:/config
       - ${PLEX_PATH}:/plex
     restart: unless-stopped
-    networks:
-      - plex-apps
     depends_on:
       - kometa
     labels:
       # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
-
-networks:
-  plex-apps:
-    external: true

@@ -5,16 +5,16 @@ services:
     ports:
       - "3003:3003"
     volumes:
-      - ./data:/app/data
+      - ${CONFIG}/pulsarr:/app/data
       - .env:/app/.env
     restart: unless-stopped
     env_file:
       - .env
-    networks:
-      - servarrnetwork
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+
     labels:
             # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
-networks:
-  servarrnetwork:
-    external: true

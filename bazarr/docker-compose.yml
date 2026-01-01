@@ -8,14 +8,14 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ./config:/config #Bazarr Config
+      - ${CONFIG}/bazarr:/config #Bazarr Config
       - ${MOVIES}:/movies #Movies Folder
       - ${TVSHOWS}:/tv #TV Shows Folder
     ports:
       - 6767:6767
     networks:
-      servarrnetwork: 
-        ipv4_address: 172.69.0.50
+      - servarrnetwork 
+      #   ipv4_address: 172.69.0.50
     labels:
       # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"

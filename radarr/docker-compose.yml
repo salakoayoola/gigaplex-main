@@ -11,13 +11,12 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ./config:/config #Radarr Config
+      - ${CONFIG}/radarr:/config #Radarr Config
       - ${MOVIES}:/movies #Movies
       - ${DOWNLOADS}:/downloads #Downloads
     restart: unless-stopped
-    networks:
-      servarrnetwork:
-        ipv4_address: 172.69.0.20
+    # networks:
+    #   - servarrnetwork 
     labels:
             # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"

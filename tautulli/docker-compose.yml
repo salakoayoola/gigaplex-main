@@ -8,15 +8,15 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ./config:/config
+      - ${CONFIG}/tautulli:/config
     ports:
       - 8181:8181
     restart: unless-stopped
-    networks:
-      - plex-apps
+    # networks:
+    #   - plex-apps
     labels:
             # Watchtower
       - "com.centurylinklabs.watchtower.enable=true"
-networks:
-  plex-apps:
-    external: true
+# networks:
+#   plex-apps:
+#     external: true
