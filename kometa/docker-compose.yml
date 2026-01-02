@@ -3,7 +3,9 @@ services:
     image: kometateam/kometa
     container_name: kometa
     environment:
-      - TZ=Europe/London
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - KOMETA_TIMES=03:00
     volumes:
       - ./config:/config
@@ -16,7 +18,9 @@ services:
     image: kometateam/imagemaid
     container_name: imagemaid
     environment:
-      - TZ=Europe/London #optional
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - SCHEDULE=05:00|weekly(sunday)
       - PLEX_URL=${PLEX_URL}
       - PLEX_TOKEN=${PLEX_TOKEN}
