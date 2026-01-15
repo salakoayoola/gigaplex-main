@@ -37,3 +37,7 @@ beszel/config/*
 ## Traefik specific ignores
 /traefik/traefik.yml
 traefik/certs/*
+
+gotify/config/*
+
+n8n-local/n8n-data/*
