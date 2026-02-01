@@ -5,6 +5,7 @@ services:
     volumes:
       - ./web/dist:/usr/share/nginx/html:ro
       - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./public:/public:ro
 
     restart: unless-stopped
     environment:
