@@ -28,6 +28,7 @@ llm/LocalAI/*
 liteLLM/config/*
 liteLLM/data/*
 openwebui/config/*
+openwebui/extensions/*
 
 ## Document Management
 docmost/config/*
@@ -89,6 +90,7 @@ salakoayoola-xyz/docker/*
 salakoayoola-xyz/.dockerignore
 salakoayoola-xyz/.env
 salakoayoola-xyz/web/*
+salakoayoola-xyz/create-favicon.sh
 mickey21/config/*
 mickey21/templates/*
 odoo/config/*
@@ -120,3 +122,6 @@ ea-in-bloom-wedding/docker/*
 ea-in-bloom-wedding/web/*
 
 ea-in-bloom/portfolio-images/*
+
+cang-ma/
+sure-finance/
