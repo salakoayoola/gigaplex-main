@@ -90,7 +90,6 @@ salakoayoola-xyz/docker/*
 salakoayoola-xyz/.dockerignore
 salakoayoola-xyz/.env
 salakoayoola-xyz/web/*
-salakoayoola-xyz/create-favicon.sh
 mickey21/config/*
 mickey21/templates/*
 odoo/config/*
