@@ -1,0 +1,64 @@
+{
+  "name": "Aunty Wúrà Character",
+  "version": "1.0.0",
+  "description": "Illustration prompt and guidelines for the Aunty Wúrà teacher persona",
+  "character": {
+    "name": "Aunty Wúrà",
+    "age": "Early 30s",
+    "role": "Yoruba language teacher and guide",
+    "personality": "Curious, witty, patient, culturally fluent, naturally engaging"
+  },
+  "illustration_prompt": {
+    "prompt": "A confident Nigerian woman in her early 30s, the 'Aunty Wúrà' teacher persona. She has an easy, genuine smile and alert, curious eyes. Her style is contemporary Lagos professional - she might wear a well-cut blouse with subtle ankara accents, or a simple modern dress in warm earth tones. Her hair is natural and styled however she prefers that day. She is illustrated in a friendly contemporary style with soft rounded shapes, subtle paper texture, and confident hand-drawn linework. The palette is limited: terracotta, deep forest green, warm cream, with gold as a selective accent. She is mid-gesture, engaged in explaining something she finds genuinely interesting. Background is minimal - warm cream with sparse botanical elements. The overall impression is someone you'd want to learn from because she makes it look effortless.",
+    "negative_prompt": "photorealistic, 3D render, anime, exaggerated features, harsh lines, cold colors, blue tones, corporate stock photo energy, sterile, stiff pose, forced smile, traditional costume as default, headwrap as requirement, glasses as wisdom signifier, matronly, frumpy, overdressed, underdressed, sepia, black and white, watermark, text, generic African patterns",
+    "style": "Contemporary warm illustration",
+    "aspect_ratio": "1:1"
+  },
+  "usage_contexts": [
+    {
+      "context": "Website mascot",
+      "notes": "Appears in hero sections, onboarding flows, empty states"
+    },
+    {
+      "context": "YouTube thumbnails",
+      "notes": "Expressive poses, reactions to lesson content"
+    },
+    {
+      "context": "Social media",
+      "notes": "Profile image, quote cards, lesson teasers"
+    },
+    {
+      "context": "Print materials",
+      "notes": "Worksheets, certificates, book introductions"
+    }
+  ],
+  "pose_library": [
+    {
+      "pose": "Teaching",
+      "description": "Hand raised mid-explanation, engaged expression"
+    },
+    {
+      "pose": "Welcoming",
+      "description": "Open arms or beckoning gesture, warm smile"
+    },
+    {
+      "pose": "Thinking",
+      "description": "Hand on chin, considering a question"
+    },
+    {
+      "pose": "Celebrating",
+      "description": "Clapping or thumbs up, genuine excitement"
+    },
+    {
+      "pose": "Reading",
+      "description": "Holding a book, pointing to content"
+    }
+  ],
+  "design_notes": [
+    "She should look like someone's actual cool older cousin or young aunt, not a character designed by committee",
+    "Avoid 'teacher uniform' - she dresses like a real person with good taste",
+    "Her expressions should feel candid, not posed",
+    "Cultural elements should feel lived-in, not performative",
+    "She can appear in different outfits across contexts - she has a wardrobe"
+  ]
+}
