@@ -90,6 +90,7 @@ salakoayoola-xyz/docker/*
 salakoayoola-xyz/.dockerignore
 salakoayoola-xyz/.env
 salakoayoola-xyz/web/*
+aunty-wura-website/*
 mickey21/config/*
 mickey21/templates/*
 odoo/config/*
@@ -124,3 +125,8 @@ ea-in-bloom/portfolio-images/*
 
 cang-ma/
 sure-finance/
+excalidraw/
+
+salakoayoola-xyz/.agent/
+salakoayoola-xyz/.agents/
+salakoayoola-xyz/skills/
