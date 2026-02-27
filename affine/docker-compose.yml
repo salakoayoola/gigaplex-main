@@ -8,7 +8,7 @@ services:
     depends_on:
       affine-redis:
         condition: service_healthy
-      # postgres:
+      # db:
       #   condition: service_healthy
       affine_migration:
         condition: service_completed_successfully
@@ -25,7 +25,8 @@ services:
       - TZ=Europe/London
       - AFFINE_SERVER_EXTERNAL_URL=${AFFINE_URL}
       - AFFINE_SERVER_HOST=${AFFINE_HOSTNAME}
-      - AFFINE_SERVER_HTTPS=false
+      - AFFINE_SERVER_HTTPS=${AFFINE_SERVER_HTTPS:-true}
+      - NODE_ENV=production
       - MAILER_HOST=${AFFINE_SMTP_ADDRESS}
       - MAILER_PORT=${AFFINE_SMTP_PORT}
       - MAILER_USER=${AFFINE_SMTP_USER_NAME}

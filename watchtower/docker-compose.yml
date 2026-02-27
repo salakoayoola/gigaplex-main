@@ -1,7 +1,7 @@
 #Watchtower - update Docker Containers automatically
 services:
   watchtower:
-    image: nickfedor/watchtower
+    image: containrrr/watchtower
     container_name: watchtower-ovh001
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -9,6 +9,7 @@ services:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_SCHEDULE: "0 4 * * *"
       WATCHTOWER_LABEL_ENABLE: "true"
+      DOCKER_API_VERSION: "1.44"
       TZ: Europe/London
     restart: unless-stopped
     networks:
