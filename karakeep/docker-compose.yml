@@ -36,14 +36,14 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   meilisearch:
-    image: getmeili/meilisearch:latest
+    image: getmeili/meilisearch:v1.31.0
     container_name: karakeep-meilisearch
     restart: unless-stopped
     env_file: .env
     environment:
       MEILI_NO_ANALYTICS: "true"
     labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false"
     volumes:
       - ./config/meilisearch/meili_data:/meili_data
     networks:

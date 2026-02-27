@@ -1,3 +1,13 @@
+# Monitoring and Logs
+monitoring/data/
+traefik/logs/
+
+# Nested Repositories
+vynta-server/
+aunty-wura-website/
+teleprompter/
+cang-ma/
+
 # Environment variables
 .env
 

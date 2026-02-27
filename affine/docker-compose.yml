@@ -38,6 +38,8 @@ services:
       - S3_ENDPOINT=${S3_ENDPOINT}
       - S3_BUCKET=${S3_BUCKET}
       - S3_FORCE_PATH_STYLE=${S3_FORCE_PATH_STYLE}
+      - AFFINE_API_TOKEN=${AFFINE_API_TOKEN}
+      - AFFINE_BASE_URL=${AFFINE_BASE_URL}
 
     labels:
     - "traefik.enable=true"
