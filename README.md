@@ -7,7 +7,7 @@ Infrastructure management for 4 Raspberry Pis and x VPS
 
 **One-liner (recommended):**
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/gigaplex-main/main/scripts/fresh-server-hardening.sh)
+bash (curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/gigaplex-main/main/scripts/fresh-server-hardening.sh)
 ```
 
 > ⚠️ Always use `bash`, never `sh` — `sh` (dash) on Ubuntu/Debian doesn't support `$()` inside `read -p` and will throw a syntax error on line 159.
