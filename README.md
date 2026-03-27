@@ -7,7 +7,7 @@ Infrastructure management for 4 Raspberry Pis and x VPS
 
 **One-liner (recommended):**
 ```bash
-sudo bash <(curl -fsSL https://raw.githubusercontent.com/salakoayoola/gigaplex-main/main/scripts/vps-setup.sh)
+curl -fsSL https://raw.githubusercontent.com/salakoayoola/gigaplex-main/main/fresh-server-hardening.sh -o /tmp/harden.sh && sudo bash /tmp/harden.sh
 ```
 
 > ⚠️ Always use `bash`, never `sh` — `sh` (dash) on Ubuntu/Debian doesn't support `$()` inside `read -p` and will throw a syntax error on line 159.
