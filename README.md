@@ -34,6 +34,34 @@ sudo bash scripts/fresh-server-hardening.sh
 
 ---
 
+### 2. Initialize Git & SSH
+
+**One-liner (recommended):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/salakoayoola/gigaplex-main/main/git-init.sh -o /tmp/git-init.sh && bash /tmp/git-init.sh
+```
+
+> 💡 Run this as your regular user (not root) after the hardening script creates your account.
+
+Or clone the repo and run locally:
+```bash
+bash git-init.sh
+```
+
+**What it does (in order):**
+1. Installs Git (if not already present)
+2. Generates SSH key pair (ed25519) with your GitHub email
+3. Configures SSH for GitHub (supports both port 22 and 443)
+4. Tests GitHub SSH connection with timeout protection
+5. Configures global Git settings (user, email, editor, diff, etc.)
+6. Cleans up any problematic `core.sshCommand` configs
+7. Optionally clones a repository with branch selection
+8. Verifies the complete setup
+
+> 💡 The script supports SSH over HTTPS port 443 which is more reliable when port 22 is blocked by ISP/firewall.
+
+---
+
 ### Nice Git-to-know
 ```bash
 # Create a safe worktree for the destination branch
@@ -52,15 +80,6 @@ git push origin ovh-cloud
 cd -
 git worktree remove ../ovh-cloud-work --force
 ```
-
----
-
-### 2. Initialize the Git Repository
-Set up git configuration and clone necessary repositories:
-- [git-init.sh](./git-init.sh)
-  - Configures git credentials
-  - Sets up SSH keys
-  - Initializes main repository
 
 ---
 
